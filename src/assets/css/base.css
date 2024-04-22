@@ -1,0 +1,67 @@
+html {
+  height: auto;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  font-family: OPPOSans-R, "Microsoft Yahei", "pingfang", "Adobe Heiti Std",
+    "Arial", "sans-serif";
+  color: #000;
+  line-height: 150%;
+  text-align: center;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background-color: #f5f8fa;
+}
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+#app {
+  width: 100%;
+  height: 100%;
+}
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  visibility: hidden !important;
+}
+::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.link {
+  text-decoration: none;
+}
+.link:active {
+  text-decoration: none;
+}
+
+/* button */
+.blue-button {
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.05);
+  transition: .2s;
+  min-width: 5rem;
+  border-radius: 5px;
+  color: #374E5C;
+  margin: 0 5px;
+  font-family: "OPPOSans-B";
+  font-size: 14px;
+}
+.blue-button--selected,
+.blue-button:hover {
+  transition: .2s;
+  background-color: #00A0FF;
+  box-shadow: 0px 2px 8px 0px rgba(0,160,255,0.5);
+  color: white;
+}

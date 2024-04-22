@@ -1,0 +1,79 @@
+*[color-type="cpu"] {
+  --base-color: #00a0ff;
+  --light-color: #e5f5ff;
+  --shadow-color: rgba(0, 160, 255, 0.5);
+}
+*[color-type="pod-failure"] {
+  --base-color: #f98b71;
+  --light-color: #fef3f0;
+  --shadow-color: rgba(255, 149, 0, 0.5);
+}
+*[color-type="network-delay"] {
+  --base-color: #4ac6c4;
+  --light-color: #e4ffff;
+  --shadow-color: rgba(0, 255, 229, 0.5);
+}
+*[color-type="memory"] {
+  --base-color: #57cf95;
+  --light-color: #eefbf5;
+  --shadow-color: rgba(0, 255, 38, 0.5);
+}
+*[color-type="loss"] {
+  --base-color: #7862e2;
+  --light-color: #f2effd;
+  --shadow-color: rgba(136, 0, 255, 0.5);
+}
+*[color-type="abort"] {
+  --base-color: #ca4dab;
+  --light-color: #ffe8f9;
+  --shadow-color: rgba(255, 0, 119, 0.5);
+}
+*[color-type="delay"] {
+  --base-color: #bfc74e;
+  --light-color: #fdffe0;
+  --shadow-color: rgba(255, 251, 0, 0.5);
+}
+*[color-type="http"] {
+  --base-color: #cf5789;
+  --shadow-color: rgba(174, 54, 118, 0.5);
+}
+*[color-type="net"] {
+  --base-color: #57cf95;
+  --shadow-color: rgba(0, 255, 38, 0.5);
+}
+*[color-type="stress"] {
+  --base-color: #7862e2;
+  --shadow-color: rgba(136, 0, 255, 0.5);
+}
+*[color-type="pod"] {
+  --base-color: #00a0ff;
+  --shadow-color: rgba(0, 160, 255, 0.5);
+}
+*[color-type="io"] {
+  --base-color: #f98b71;
+  --shadow-color: rgba(255, 149, 0, 0.5);
+}
+
+/* vue transition 动画 */
+.opacity300-enter-active {
+  pointer-events: none !important;
+  animation: opacityAn 0.3s reverse;
+}
+.opacity300-leave-active {
+  pointer-events: none !important;
+  animation: opacityAn 0.3s ease;
+}
+.opacity300-enter-from,
+.opacity300-leave-to {
+  opacity: 0;
+}
+
+@keyframes opacityAn {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+  

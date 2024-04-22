@@ -1,0 +1,207 @@
+<template>
+  <div>
+    <!-- 类都在index.vue里面 因为week和day组件类共用 -->
+    <table class="calendar-table">
+      <thead>
+        <tr>
+          <td
+            v-for="d, i in table.week"
+            :key="i"
+          >
+            <div>
+              <div d-type="time">
+                <div>周{{ d }}</div>
+                <div>{{ table.date[i] }}</div>
+              </div>
+              <div d-type="data">
+                <div
+                  v-for="typeData, ti in table.typeAmount[i]"
+                  :key="ti"
+                  :color-type="typeData.type"
+                  d-type="data-ele"
+                >{{ typeData.amount }}</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="t, i in table.time"
+          :key="i"
+        >
+          <td
+            v-for="_, j in table.week"
+            :key="j"
+            :data-time="j === 0 && i > 0 ? t : null"
+            td-type="calendar"
+          >
+            <!--  -->
+          </td>
+        </tr>
+      </tbody>
+      <table class="calendar-data-table">
+        <thead>
+          <tr>
+            <td
+              v-for="d, i in table.week"
+              :key="i"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              v-for="_, j in 7"
+              :key="j"
+              @click="clickDataTd(j)"
+              @dblclick="dblclickDataTd(j)"
+            >
+              <!--  -->
+              <Card
+                v-for="d in data[j]"
+                :key="d.drawId"
+                :v-if="d.draw"
+                :type="d.data.failure_type"
+                :card-data="d"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        ref="timeline"
+        class="calendar-time-line"
+      >
+        <div time-type="left" />
+        <div time-type="time">
+          <span ref="timelineHour" />:<span ref="timelineMinutes" />
+        </div>
+        <div time-type="right" />
+      </div>
+    </table>
+  </div>
+</template>
+
+<script>
+import CalendarDataManager from './data'
+import Card from './card.vue'
+export default {
+  components: {
+    Card
+  },
+  data() {
+    return {
+      table: {
+        week: ['日', '一', '二', '三', '四', '五', '六'],
+        date: new Array(7).fill(''),
+        time: [],
+        typeAmount: [[], [], [], [], [], [], []]
+      },
+      calendarDataManager: null,
+      data: [[], [], [], [], [], [], []],
+      timer: null
+    }
+  },
+  mounted() {
+    this.initTime()
+    this.initTimeLine()
+    /**
+     * 借用window实现单例
+     */
+    if (!window.calendarDataManager) window.calendarDataManager = new CalendarDataManager()
+    this.calendarDataManager = window.calendarDataManager
+    this.calendarDataManager.setType('week')
+    this.getData()
+  },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer)
+  },
+  methods: {
+    /**
+     * 时间初始化
+     */
+    initTime() {
+      for (let i = 0; i < 24; i++) {
+        this.table.time.push((i < 10 ? '0' + i.toString() : i.toString()) + ':00')
+      }
+    },
+    /**
+     * 获取数据
+     */
+    async getData() {
+      const data = await this.calendarDataManager.getDataSync()
+      // console.log(data)
+      const week = this.calendarDataManager.getCalendarShowDate()
+      this.data = data
+      this.table.typeAmount = [[], [], [], [], [], [], []]
+      data.forEach((day, i) => {
+        day.forEach((err) => {
+          const type = err.data.failure_type
+          const ele = this.table.typeAmount[i].find((ele) => ele.type === type)
+          if (ele === undefined) {
+            this.table.typeAmount[i].push({
+              type: type,
+              amount: 1
+            })
+          } else {
+            ele.amount++
+          }
+        })
+        this.table.typeAmount[i].sort((a, b) => a.amount - b.amount)
+      })
+      const date = []
+      week.forEach((d) => {
+        date.push(d.M + ':' + d.d)
+      })
+      this.table.date = date
+    },
+    lastWeek() {
+      this.calendarDataManager.lastWeek()
+      this.getData()
+    },
+    nextWeek() {
+      this.calendarDataManager.nextWeek()
+      this.getData()
+    },
+    setWeek(weekBegin) {
+      this.calendarDataManager.setWeek(weekBegin)
+      this.getData()
+    },
+    clickDataTd(index) {
+      console.log(index)
+    },
+    dblclickDataTd(index) {
+      console.log('dbl', index)
+    },
+    initTimeLine() {
+      const ele = this.$refs.timeline
+      const hour = this.$refs.timelineHour
+      const minutes = this.$refs.timelineMinutes
+      const TOP = 50
+      const s = new Date().getSeconds()
+      const DAY = 1000 * 60 * 60 * 24
+      const analyse = (timestamp) => {
+        const now = new Date(timestamp)
+        const nowM = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
+        const nowH = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
+        const nowTimestamp = timestamp - new Date().setHours(0, 0, 0, 0)
+        ele.style.top = 'calc((100% - ' + TOP.toString() + 'px) * ' + (nowTimestamp / DAY).toString() + ' + ' + TOP.toString() + 'px)'
+        hour.textContent = nowH
+        minutes.textContent = nowM
+      }
+      analyse(new Date().getTime())
+      setTimeout(() => {
+        analyse(new Date().getTime())
+        this.timer = setInterval(() => {
+          analyse(new Date().getTime())
+        }, 60 * 1000)
+      }, 60 * 1000 - s * 1000)
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>
