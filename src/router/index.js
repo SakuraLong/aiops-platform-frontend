@@ -12,7 +12,11 @@ import DataMonitorTopology from '@/views/DataMonitorTopology'
 import AlgorithmManagement from '@/views/AlgorithmManagement'
 import AlgorithmTemplate from '@/views/AlgorithmTemplate'
 import EvaluateData from '@/views/EvaluateData'
-import UserManagement from '@/views/UserManagement'
+
+import SystemManagement from '@/views/SystemManagement'
+import UserManagement from '@/views/SystemManagement/UserManagement'
+import RoleManagement from '@/views/SystemManagement/RoleManagement'
+
 import AlgorithmDetail from '@/views/AlgorithmDetail'
 
 import Client from '@/views/Client'
@@ -144,11 +148,33 @@ const routes = [
     }
   },
   {
-    name: 'UserManagement',
-    path:'/userManagement',
-    component: UserManagement,
+    name: 'SystemManagement',
+    path:'/systemManagement',
+    component: SystemManagement,
+    children: [
+      {
+        path: 'userManagement',
+        name: 'userManagement',
+        component: UserManagement,
+        meta: {
+          header: 'SystemManagement',
+          DMEName: 'userManagement',
+          DMETLName: 'error'
+        }
+      },
+      {
+        path: 'roleManagement',
+        name: 'roleManagement',
+        component: RoleManagement,
+        meta: {
+          header: 'SystemManagement',
+          DMEName: 'roleManagement',
+          DMETLName: 'error'
+        }
+      }
+    ],
     meta: {
-      header: 'userManagement'
+      header: 'systemManagement'
     }
   },
   {

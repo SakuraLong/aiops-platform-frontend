@@ -26,13 +26,13 @@ module.exports = {
     'vue/valid-attribute-name': 'off',
     'vue/valid-model-definition': 'off',
     'vue/max-attributes-per-line': [
-      1,
+      'error',
       {
         singleline: {
-          max: 1
+          max: 12
         },
         multiline: {
-          max: 1
+          max: 13
         }
       }
     ], // vue/每行最大属性 在单行情况下可接受的属性数量可配置（默认值为 1），在多行情况下，每行可接受的属性数量可配置（默认值 1）。
