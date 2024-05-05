@@ -57,22 +57,22 @@ export default {
 .left {
   display: flex;
   flex-direction: column;
-  width: calc(300px - 5px * 2);
-  padding: 5px;
+  width: calc(300px);
+  padding: 5px 0px;
 }
 
 .right {
-  width: calc(100% - 300px - 5px * 2);
-  padding: 5px;
+  width: calc(100% - 300px);
+  padding: 5px 0px;
 }
 
 /* type 2 */
 .left--2 {
-  width: calc(200px - 5px * 2) !important;
+  width: calc(200px) !important;
 }
 
 .right--2 {
-  width: calc(100% - 200px - 5px * 2) !important;
+  width: calc(100% - 200px) !important;
 }
 
 /* type 3 */
@@ -82,7 +82,7 @@ export default {
 }
 
 .right--3 {
-  width: calc(100% - 5px * 2) !important;
+  width: calc(100%) !important;
 }
 
 .structure-shadow {

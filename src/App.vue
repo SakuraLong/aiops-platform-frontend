@@ -16,13 +16,13 @@ export default {
   },
   mounted() {
     // 用来测试和服务器是否连上
-    test({
-      data: 'ascasc'
-    }).then((res) => {
-      console.log(res)
-    }).catch((err) => {
-      console.log(err)
-    })
+    // test({
+    //   data: 'ascasc'
+    // }).then((res) => {
+    //   console.log(res)
+    // }).catch((err) => {
+    //   console.log(err)
+    // })
   }
 }
 </script>

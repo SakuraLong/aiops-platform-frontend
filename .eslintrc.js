@@ -22,6 +22,7 @@ module.exports = {
     //     'allowFirstLine': false
     //   }
     // }],
+    'vue/no-v-model-argument':  'off',
     'vue/valid-attribute-name': 'off',
     'vue/valid-model-definition': 'off',
     'vue/max-attributes-per-line': [

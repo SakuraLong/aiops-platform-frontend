@@ -28,7 +28,6 @@
             <span>{{ route.name }}</span>
           </router-link>
         </div>
-        <div>asc</div>
       </div>
     </template>
     <template #card-r-2>

@@ -13,17 +13,20 @@
   --light-color: #e4ffff;
   --shadow-color: rgba(0, 255, 229, 0.5);
 }
-*[color-type="memory"] {
+*[color-type="memory"],
+*[color-type="frontend"]  {
   --base-color: #57cf95;
   --light-color: #eefbf5;
   --shadow-color: rgba(0, 255, 38, 0.5);
 }
-*[color-type="loss"] {
+*[color-type="loss"],
+*[color-type="productcatalogservice"] {
   --base-color: #7862e2;
   --light-color: #f2effd;
   --shadow-color: rgba(136, 0, 255, 0.5);
 }
-*[color-type="abort"] {
+*[color-type="abort"],
+*[color-type="cartservice"] {
   --base-color: #ca4dab;
   --light-color: #ffe8f9;
   --shadow-color: rgba(255, 0, 119, 0.5);

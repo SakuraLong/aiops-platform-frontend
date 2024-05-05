@@ -1,7 +1,5 @@
 <template>
-  <div>
-    sssss
-  </div>
+  <div>asc</div>
 </template>
 
 <script>
@@ -10,6 +8,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

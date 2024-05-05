@@ -1,15 +1,3 @@
-<!--
- * @FileDescription
- * 每个页面的卡片
- * @Author
- * Wen Long
- * @Date
- * 2024/4/1
- * @LastEditors
- * Wen Long
- * @LastEditTime
- * 2024/4/2
- -->
 <template>
   <div
     ref="card"

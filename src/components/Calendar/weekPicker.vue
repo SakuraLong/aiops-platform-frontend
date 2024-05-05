@@ -11,7 +11,7 @@
       type="week"
       format="YYYY 第 ww 周"
       placeholder="选择周"
-      size="mini"
+      size="small"
       @change="setWeek"
     />
     <img
@@ -62,7 +62,7 @@ export default {
 .week-picker > img {
   cursor: pointer;
   user-select: none;
-  width: 28px;
-  height: 28px;
+  width: 25px;
+  height: 25px;
 }
 </style>

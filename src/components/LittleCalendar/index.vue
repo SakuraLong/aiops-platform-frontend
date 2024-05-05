@@ -154,6 +154,7 @@ export default {
 .little-calendar-table td > div > div {
   width: 24px;
   height: 24px;
+  text-align: center;
 }
 .little-calendar-table > thead,
 .little-calendar-item--gray{

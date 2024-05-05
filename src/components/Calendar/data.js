@@ -15,7 +15,7 @@
  * 随机测试数据生成器生成器
  * @returns 随机测试数据生成器
  */
-// import { getGroundTruth } from '@/network/api/fault-list.js'
+// import { getGroundTruth } from '@/api/fault-list.js'
 function createRandomData() {
   const dataMap = new Map()
   const DAY = 1000 * 60 * 60 * 24

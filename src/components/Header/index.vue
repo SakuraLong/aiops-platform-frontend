@@ -9,16 +9,19 @@
       >
     </div>
     <div class="header-center">
-      <router-link
+      <component
+        :is="route.a ? 'a' : 'router-link'"
         v-for="route, i in routeList"
         :key="i"
         class="link blue-button"
-        :class="{'blue-button--selected': $route.meta.header === route.routeName}"
+        :class="{'blue-button--selected': $route.meta.header !== undefined && $route.meta.header === route.routeName}"
         :to="route.path"
-      >{{ route.name }}</router-link>
+        :href="route.path"
+        :target="route.target ? route.target : ''"
+      >{{ route.name }}</component>
     </div>
     <div class="header-right">
-      right
+      <router-link to="/client/login">登出</router-link>
     </div>
   </div>
 </template>
@@ -35,28 +38,34 @@ export default {
         },
         {
           name: '故障注入',
-          path: '/'
+          path: 'http://10.10.1.202:2333',
+          target: '_blank',
+          a: true
         },
         {
           name: '数据监控',
           routeName: 'dataMonitor',
           path: '/dataMonitor'
         },
-        {
-          name: '算法管理',
-          path: '/'
-        },
+        // {
+        //   name: '算法管理',
+        //   routeName: 'algorithmManagement',
+        //   path: '/algorithmManagement'
+        // },
         {
           name: '算法模板',
-          path: '/'
+          routeName: 'algorithmTemplate',
+          path: '/algorithmTemplate'
         },
         {
           name: '评估数据',
-          path: '/'
+          routeName: 'evaluateData',
+          path: '/evaluateData'
         },
         {
           name: '用户管理',
-          path: '/'
+          routeName: 'userManagement',
+          path: '/userManagement'
         }
       ]
     }
@@ -90,6 +99,9 @@ export default {
 }
 .header-center {
   width: 60%;
+}
+.header-center a {
+  text-align: center;
 }
 .header-logo {
   width: 100%;

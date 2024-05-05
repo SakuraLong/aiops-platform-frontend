@@ -16,7 +16,7 @@
             <el-select
               v-model="selectValue"
               style="width: 80px;"
-              size="mini"
+              size="small"
               placeholder="请选择"
             >
               <el-option
@@ -42,18 +42,18 @@
           </div>
           <div class="data__controller">
             <el-button
-              size="mini"
+              size="small"
               type="primary"
               @click="toDataMonitor"
             >
               数据监控
             </el-button>
-            <el-button
-              size="mini"
+            <!-- <el-button
+              size="small"
               type="primary"
             >
               导出
-            </el-button>
+            </el-button> -->
           </div>
         </div>
       </div>
@@ -120,12 +120,12 @@
             </div>
           </div>
           <div class="data__controller">
-            <el-button
-              size="mini"
+            <!-- <el-button
+              size="small"
               type="primary"
             >
               导出
-            </el-button>
+            </el-button> -->
           </div>
         </div>
       </div>
@@ -258,6 +258,7 @@ export default {
   line-height: 30px;
   border-radius: 8px;
   cursor: pointer;
+  text-align: center;
 }
 .controller__weekday--selected {
   color: #00A0FF;

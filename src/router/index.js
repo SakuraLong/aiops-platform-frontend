@@ -9,8 +9,34 @@ import metric from '@/views/DataMonitorError/components/metric.vue'
 import trace from '@/views/DataMonitorError/components/trace.vue'
 
 import DataMonitorTopology from '@/views/DataMonitorTopology'
+import AlgorithmManagement from '@/views/AlgorithmManagement'
+import AlgorithmTemplate from '@/views/AlgorithmTemplate'
+import EvaluateData from '@/views/EvaluateData'
+import UserManagement from '@/views/UserManagement'
+import AlgorithmDetail from '@/views/AlgorithmDetail'
+
+import Client from '@/views/Client'
+import login from '@/views/Client/login.vue'
+import reg from '@/views/Client/reg.vue'
 
 const routes = [
+  {
+    path: '/client',
+    name: 'client',
+    component: Client,
+    children: [
+      {
+        path: 'login',
+        name: 'login',
+        component: login
+      },
+      {
+        path: 'reg',
+        name: 'reg',
+        component: reg
+      }
+    ]
+  },
   {
     path: '/',
     name: 'home',
@@ -91,10 +117,44 @@ const routes = [
   {
     name: 'DataMonitor',
     path: '/dataMonitor',
-    redirect: '/dataMonitor/error/fault',
+    redirect: '/dataMonitor/error/fault'
+  },
+  {
+    name: 'AlgorithmManagement',
+    path: '/algorithmManagement',
+    component: AlgorithmManagement,
     meta: {
-      breadcrumb: null
+      header: 'algorithmManagement'
     }
+  },
+  {
+    name: 'AlgorithmTemplate',
+    path: '/algorithmTemplate',
+    component: AlgorithmTemplate,
+    meta: {
+      header: 'algorithmTemplate'
+    }
+  },
+  {
+    name: 'EvaluateData',
+    path: '/evaluateData',
+    component: EvaluateData,
+    meta: {
+      header: 'evaluateData'
+    }
+  },
+  {
+    name: 'UserManagement',
+    path:'/userManagement',
+    component: UserManagement,
+    meta: {
+      header: 'userManagement'
+    }
+  },
+  {
+    name: 'AlgorithmDetail',
+    path:'/algorithmDetail',
+    component: AlgorithmDetail
   }
 ]
 
