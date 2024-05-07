@@ -60,6 +60,7 @@
               <!--  -->
               <Card
                 v-for="d in data[j]"
+                v-show="selectType === '全部' || selectType === d.data.failure_type"
                 :key="d.drawId"
                 :v-if="d.draw"
                 :type="d.data.failure_type"
@@ -90,6 +91,12 @@ export default {
   components: {
     Card
   },
+  props: {
+    selectType: {
+      default: '全部',
+      type: String
+    }
+  },
   data() {
     return {
       table: {
@@ -100,7 +107,13 @@ export default {
       },
       calendarDataManager: null,
       data: [[], [], [], [], [], [], []],
-      timer: null
+      timer: null,
+      faultAmount: 0
+    }
+  },
+  watch: {
+    selectType() {
+      this.updateFaultAmount()
     }
   },
   mounted() {
@@ -131,13 +144,24 @@ export default {
      */
     async getData() {
       const data = await this.calendarDataManager.getDataSync()
-      // console.log(data)
+      console.log(data)
       const week = this.calendarDataManager.getCalendarShowDate()
+      const date = []
+      week.forEach((d) => {
+        date.push(d.M + ':' + d.d)
+      })
+      this.table.date = date
+
+      this.render(data)
+    },
+    render(data) {
       this.data = data
       this.table.typeAmount = [[], [], [], [], [], [], []]
+      this.faultAmount = 0
       data.forEach((day, i) => {
         day.forEach((err) => {
           const type = err.data.failure_type
+          if (this.selectType !== '全部' && this.selectType !== type) return
           const ele = this.table.typeAmount[i].find((ele) => ele.type === type)
           if (ele === undefined) {
             this.table.typeAmount[i].push({
@@ -147,14 +171,11 @@ export default {
           } else {
             ele.amount++
           }
+          this.faultAmount++
         })
         this.table.typeAmount[i].sort((a, b) => a.amount - b.amount)
       })
-      const date = []
-      week.forEach((d) => {
-        date.push(d.M + ':' + d.d)
-      })
-      this.table.date = date
+      this.$emit('setFaultAmount', this.faultAmount)
     },
     lastWeek() {
       this.calendarDataManager.lastWeek()
@@ -197,6 +218,31 @@ export default {
           analyse(new Date().getTime())
         }, 60 * 1000)
       }, 60 * 1000 - s * 1000)
+    },
+    updateFaultAmount() {
+      this.faultAmount = 0
+      this.table.typeAmount = [[], [], [], [], [], [], []]
+      this.data.forEach((day, i) => {
+        day.forEach((err) => {
+          const type = err.data.failure_type
+          if (this.selectType !== '全部' && this.selectType !== type) return
+          this.faultAmount++
+          const ele = this.table.typeAmount[i].find((ele) => ele.type === type)
+          if (ele === undefined) {
+            this.table.typeAmount[i].push({
+              type: type,
+              amount: 1
+            })
+          } else {
+            ele.amount++
+          }
+        })
+        this.table.typeAmount[i].sort((a, b) => a.amount - b.amount)
+      })
+      this.$emit('setFaultAmount', this.faultAmount)
+    },
+    getFaultAmount() {
+      return this.faultAmount
     }
   }
 }

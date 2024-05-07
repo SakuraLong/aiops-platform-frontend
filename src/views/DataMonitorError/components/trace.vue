@@ -12,11 +12,15 @@
             :disabled-date="judge"
             style="width: 200px; margin-right: 5px"
           />
-          <el-button size="small">
+          <el-button
+            size="small"
+            :disabled="!datetime"
+            @click="searchTraceList"
+          >
             <template #icon>
               <Search />
             </template>
-            搜素
+            搜索
           </el-button>
         </div>
         <div>
@@ -29,18 +33,21 @@
         </div>
       </header>
       <main>
-        <TraceCard :data="{path: 'asascascascascascascascascascascascascascascascascascascascascascasccasc', duration: '123', time: '213243565'}" />
-        <TraceCard :data="{path: 'asascascascascascascascascascascascascascascascascascascascascascasccasc', duration: '123', time: '213243565'}" />
-        <TraceCard :data="{path: 'asascascascascascascascascascascascascascascascascascascascascascasccasc', duration: '123', time: '213243565'}" />
-        <TraceCard :data="{path: 'asascascascascascascascascascascascascascascascascascascascascascasccasc', duration: '123', time: '213243565'}" />
-        <TraceCard :data="{path: 'asascascascascascascascascascascascascascascascascascascascascascasccasc', duration: '123', time: '213243565'}" />
-        <TraceCard :data="{path: 'asascascascascascascascascascascascascascascascascascascascascascasccasc', duration: '123', time: '213243565'}" />
+        <TraceCard
+          v-for="trace, i in traceList.slice((currentPage - 1) * 10, currentPage * 10)"
+          :key="i"
+          :data="trace"
+          :active="(currentPage - 1) * 10 + i === activeTraceCard"
+          @click="clickTraceCard((currentPage - 1) * 10 + i)"
+        />
       </main>
       <footer>
         <el-pagination
+          v-model:current-page="currentPage"
           small
           layout="prev, pager, next"
-          :total="1000"
+          :total="total"
+          :page-size="10"
         />
       </footer>
     </div>
@@ -48,18 +55,18 @@
       <header>
         <div class="DME-trace__detail">
           <div O-B>
-            <span>{{ traceGraph[0].operation_name }}</span>
+            <span>{{ traceGraph[0] && traceGraph[0].operation_name }}</span>
           </div>
           <div O-R>
             <div class="DME-trace__detail__little">
               <span>起始点</span>
-              <span>{{ new Date(traceGraph[0].timestamp / 1000).toLocaleString() }}</span>
+              <span>{{ traceGraph[0] && new Date(traceGraph[0].timestamp / 1000).toLocaleString() }}</span>
             </div>
             <div class="DME-trace__detail__little">
               <span>持续时间</span>
-              <span>{{ traceGraph[0].duration / 1000 }}ms</span>
+              <span>{{ traceGraph[0] && traceGraph[0].duration / 1000 }}ms</span>
             </div>
-            <span class="DME-trace__detail-id">{{ traceGraph[0].span_id }}</span>
+            <span class="DME-trace__detail-id">{{ traceGraph[0] && traceGraph[0].span_id }}</span>
           </div>
         </div>
         <div>
@@ -93,7 +100,9 @@
 import TraceCard from '@/components/TraceCard'
 import TraceGraph from '@/components/TraceGraph'
 import TraceTable from '@/components/TraceTable'
-import { traceGraph } from '@/utils/test'
+import { traceGraph, traceList } from '@/utils/test'
+import { getTraceList, getTrace } from '@/api/trace'
+import { judgeDuration, message, deepClone } from '@/utils/utils'
 export default {
   name: 'Trace',
   components: {
@@ -105,13 +114,59 @@ export default {
     return {
       showGraph: true,
       datetime: null,
-      traceGraph: traceGraph,
-      showType: '1'
+      traceGraph: [],
+      traceList: [],
+      currentPage: 1,
+      showType: '1',
+      activeTraceCard: -1,
+      traceMap: new Map() // 减少调用接口次数
+    }
+  },
+  computed: {
+    total() {
+      return this.traceList.length
     }
   },
   methods: {
     judge(date) {
       return date.getTime() >= Date.now()
+    },
+    clickTraceCard(i) {
+      this.activeTraceCard = i
+      const searchId = this.traceList[i].trace_id
+      if (this.traceMap.has(searchId)) {
+        this.traceGraph = deepClone(this.traceMap.get(searchId))
+      } else {
+        this.traceGraph = []
+        getTrace({
+          trace_id: searchId
+        }).then((res) => {
+          console.log(res)
+          const traceGraph = res
+          this.traceMap.set(searchId, deepClone(traceGraph))
+          this.traceGraph = traceGraph
+        }).catch((err) => {
+          message(err.message)
+          this.traceGraph = []
+        })
+      }
+    },
+    searchTraceList() {
+      if (!this.datetime) return
+      const startTime = this.datetime[0].getTime()
+      const endTime = this.datetime[1].getTime()
+      if (judgeDuration(startTime, endTime, 15)) {
+        getTraceList({
+          start_time: startTime / 1000,
+          end_time: endTime / 1000
+        }).then((res) => {
+          this.currentPage = 1
+          this.activeTraceCard = -1
+          this.traceList = res
+        }).catch((err) => {
+          message(err.message)
+        })
+      }
     }
   }
 }

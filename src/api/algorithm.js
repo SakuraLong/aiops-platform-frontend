@@ -1,18 +1,17 @@
 import request from '@/utils/request'
 
-export function algorithmQuery(params) {
+export function algorithmQuery() {
   return request({
     url: '/algorithm-query',
-    method: 'get',
-    params
+    method: 'get'
   })
 }
 
-export function algorithmRun(params) {
+export function algorithmRun(data) {
   return request({
-    url: '/algorithm-query',
+    url: '/algorithm-run',
     method: 'post',
-    params
+    data
   })
 }
 

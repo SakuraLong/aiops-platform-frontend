@@ -4,11 +4,14 @@
       <div>
         <!-- 暂时先不放东西了 -->
       </div>
-      <div class="TG-header__type-list">
+      <div
+        v-show="typeSet.length > 0"
+        class="TG-header__type-list"
+      >
         <span>类别:</span>
         <span
-          v-for="t, i in typeSet"
-          :key="i"
+          v-for="t in typeSet"
+          :key="t.key + 'text'"
           class="TG-header__type-item"
           :color-type="t"
         >
@@ -23,7 +26,7 @@
         <!-- 文字内容不随着横向滚动 -->
         <div
           v-for="item, i in renderData"
-          :key="i"
+          :key="item.key"
           class="TG-main__graph-text"
           :style="{'--margin-left': item.marginLeft}"
           @click="clickLine(i)"
@@ -102,13 +105,21 @@ export default {
   data() {
     return {
       marginLeft: 40, // 线条左侧边距
-      lineDuration: 2, // 5ms
-      lineMinWidth: 100, // 5ms对应的线条最短长度
-      lineWidth: 0, // 20ms对应的线条长度
+      lineDuration: 1, // 1ms
+      lineMinWidth: 150, // 1ms对应的线条最短长度
+      lineWidth: 0, // 1ms对应的线条长度
+      rulerLength: 1, // 刻度尺长度 1ms
       renderByData: [], // 准备用于渲染的数据
       renderData: [], // 用于渲染的数据
       typeSet: new Set(), // 类别set
-      n: 0
+      forceDraw: true // 强制绘制 数据修改后变为true
+    }
+  },
+  watch: {
+    data() {
+      this.forceDraw = true
+      this.dataInit()
+      this.draw()
     }
   },
   mounted() {
@@ -122,6 +133,11 @@ export default {
   methods: {
     draw() {
       // 绘制函数
+      if (this.data.length === 0) {
+        this.renderData = []
+        this.typeSet.clear()
+        return
+      }
       const main = this.$refs.main
       const mainWidth = main.clientWidth - this.marginLeft
       const renderByData = this.renderByData
@@ -133,10 +149,14 @@ export default {
       } else {
         lineWidth = this.lineMinWidth
       }
-      if (lineWidth === this.lineWidth) return
+      if (lineWidth === this.lineWidth) {
+        if (this.forceDraw) this.forceDraw = false
+        else return
+      }
       this.lineWidth = lineWidth
       const begin = renderByData[0].timestamp
       renderByData.forEach((item) => {
+        item.key = parseInt((Math.random() * 100000000)).toString()
         item.lineWidth = (item.duration / this.lineDuration * lineWidth).toString() + 'px'
         item.lineWidthNum = item.duration / this.lineDuration * lineWidth
         item.leftNum = this.marginLeft + (item.timestamp - begin) / this.lineDuration * lineWidth
@@ -144,7 +164,7 @@ export default {
         item.marginLeftNum = item.level * this.marginLeft
         item.marginLeft = (item.level * this.marginLeft).toString() + 'px'
       })
-      const d = 2
+      const d = this.rulerLength
       const lineDmsWidth = lineWidth / this.lineDuration * d
       const l = Math.ceil(fullDuration / d)
       const last = fullDuration / d * lineDmsWidth - (l - 1) * lineDmsWidth
@@ -161,6 +181,7 @@ export default {
       }) // 占位
       const renderData = deepClone(renderByData)
       renderData.unshift({
+        key: parseInt((Math.random() * 100000000)).toString(),
         ruler: true,
         left: this.marginLeft.toString() + 'px',
         lineWidth: (renderData[0].lineWidthNum + this.marginLeft).toString() + 'px',
@@ -169,10 +190,12 @@ export default {
       this.renderData = renderData
     },
     dataInit() {
+      if (this.data.length === 0) return
       const temp = deepClone(this.data)
       temp.sort((a, b) => a.timestamp - b.timestamp)
       const res = []
       const stack = []
+      this.typeSet.clear()
       temp.forEach((item) => {
         this.typeSet.add(item.cmdb_id)
         item.level = 1
@@ -225,15 +248,23 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  height: 30px;
 }
 .TG-header__type-list {
   user-select: none;
   display: flex;
   align-items: center;
+  max-width: 60%;
+  max-height: 30px;
+  overflow: auto;
+  overflow-y: hidden;
+  font-size: 14px;
+}
+.TG-header__type-list > span:nth-of-type(1) {
+  min-width: 40px;
 }
 .TG-header__type-item {
   margin: 0px 5px;
-  font-size: 14px;
   display: flex;
   align-items: center;
 }

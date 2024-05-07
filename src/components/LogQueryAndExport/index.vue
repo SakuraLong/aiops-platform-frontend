@@ -8,10 +8,13 @@
         end-placeholder="End date"
         format="YYYY-MM-DD HH:mm:ss"
         date-format="YYYY-MM-DD ddd"
-        time-format="A hh:mm:ss"
+        time-format="HH:mm:ss"
         :disabled-date="judge"
       />
-      <el-button @click="logDataQuery">
+      <el-button
+        :disabled="!duration"
+        @click="logDataQuery"
+      >
         <span O-R>搜索</span>
         <template #icon>
           <Search />
@@ -20,17 +23,20 @@
       <el-input
         v-model="search"
         style="width: 140px"
-        placeholder="对结果检索"
+        placeholder="对信息检索"
+        :disabled="!duration"
+        @input="searchChange"
       />
       <el-select
         v-model="selectedPodName"
         placeholder="Select"
         style="width: 140px"
+        title="对PodName分类"
       >
         <el-option
           v-for="item in options"
           :key="item.value"
-          :label="item.label"
+          :label="item.value"
           :value="item.value"
         />
       </el-select>
@@ -68,19 +74,24 @@
         />
         <el-table-column label="信息">
           <template #default="scope">
-            <el-tooltip
-              placement="top"
-              effect="light"
-            >
-              <template #content>
-                <span class="LogQAE__popper">
-                  {{ JSON.stringify(scope.row.message) }}
-                </span>
-              </template>
-              <el-text truncated>
-                {{ JSON.stringify(scope.row.message) }}
-              </el-text>
-            </el-tooltip>
+            <article class="LQAE-article">
+              <el-tooltip
+                placement="top"
+                effect="light"
+              >
+                <template #content>
+                  <span
+                    class="LogQAE__popper"
+                    v-html="scope.row.showMessage"
+                  />
+                </template>
+                <el-text
+                  truncated
+                >
+                  <span v-html="scope.row.showMessage" />
+                </el-text>
+              </el-tooltip>
+            </article>
           </template>
         </el-table-column>
         <el-table-column
@@ -92,7 +103,7 @@
               text
               type="primary"
               @click="showLogDetail(scope.row)"
-            >查看message</el-button>
+            >查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -130,6 +141,9 @@
 <script>
 import PlatformDrawer from '@/components/PlatformDrawer'
 import JsonViewer from 'vue-json-viewer'
+import { getLog } from '@/api/log'
+import { judgeDuration, message } from '@/utils/utils'
+import { logList } from '@/utils/test'
 export default {
   components: {
     PlatformDrawer,
@@ -137,7 +151,7 @@ export default {
   },
   data() {
     return {
-      duration: '',
+      duration: null,
       search: '',
       currentPage: 1,
       pageSize: 10,
@@ -145,44 +159,21 @@ export default {
       background: false,
       disabled: false,
       showDetail: false,
-      logData: {
-        a: 123,
-        asc: [123, 324]
-      },
-      logList: [
-        {
-          id: 'ascasc',
-          podName: 'ascascasc',
-          time: 'asassasaas',
-          message: {
-            a: 1222222222222222222222222222222222223,
-            b: 'ascascascccccccccccccccccpppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppascascascccccccccccccccccppppppppppppppppppppppppppp',
-            asc: [123, 324]
-          }
-        }
-      ],
+      logData: {},
+      logList: [],
       selectedPodName: '全部',
       options: [
-        {
-          value: '全部',
-          label: '全部'
-        },
-        {
-          value: 'Option2',
-          label: 'Option2'
-        },
-        {
-          value: 'Option3',
-          label: 'Option3'
-        },
-        {
-          value: 'Option4',
-          label: 'Option4'
-        },
-        {
-          value: 'Option5',
-          label: 'Option5'
-        }
+        { value: '全部' },
+        { value: 'cartservice' },
+        { value: 'checkoutservice' },
+        { value: 'currencyservice' },
+        { value: 'emailservice' },
+        { value: 'frontend' },
+        { value: 'paymentservice' },
+        { value: 'productcatalogservice' },
+        { value: 'recommendationservice' },
+        { value: 'redis' },
+        { value: 'shippingservice' }
       ]
     }
   },
@@ -191,21 +182,49 @@ export default {
       let showData = []
       if (this.selectedPodName === '全部') showData =  this.logList
       else showData = this.logList.filter((item) => item.podName === this.selectedPodName)
-      if (this.search !== '') showData = showData.filter((item) => JSON.stringify(item.message).indexOf(this.search) !== -1)
+      if (this.search !== '') showData = showData.filter((item) => item.message.toLowerCase().indexOf(this.search.toLowerCase()) !== -1)
+      showData.forEach((data) => {
+        data.showMessage = this.replace(data.message)
+      })
       return showData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
     },
     total() {
       const showData = this.logList.filter((item) => this.selectedPodName === '全部' ? true : item.podName === this.selectedPodName)
       if (this.search === '') return showData.length
-      else return showData.filter((item) => JSON.stringify(item.message).indexOf(this.search) !== -1).length
+      else return showData.filter((item) => item.message.toLowerCase().indexOf(this.search.toLowerCase()) !== -1).length
     }
   },
   methods: {
     judge(date) {
       return date.getTime() >= Date.now()
     },
+    handleSizeChange() {
+      //
+    },
+    handleCurrentChange() {
+      //
+    },
+    replace(str) {
+      // 大小写不敏感匹配时，保留原有数据
+      let lowerStr = str.toLowerCase()
+      const lowerSearch = this.search.toLowerCase()
+      if (!lowerSearch) return str
+      const before = '<span search-results>'
+      const after = '</span>'
+      let startPos = 0
+      while (startPos < lowerStr.length) {
+        console.log(startPos)
+        const index = lowerStr.indexOf(lowerSearch, startPos)
+        if (index === -1) break
+        const target = str.slice(index, index + lowerSearch.length)
+        str = str.slice(0, index) + before + target + after + str.slice(index + lowerSearch.length)
+        lowerStr = lowerStr.slice(0, index) + before + target + after + lowerStr.slice(index + lowerSearch.length)
+        startPos = index + before.length + lowerSearch.length + after.length
+      }
+      return str
+    },
     showLogDetail(row) {
-      this.logData = row.message
+      this.logData = row.detail
       this.showDetail = true
     },
     logDataExport() {
@@ -213,6 +232,88 @@ export default {
     },
     logDataQuery() {
       // 日志数据查询
+      if (!this.duration) return
+      const startTime = this.duration[0].getTime()
+      const endTime = this.duration[1].getTime()
+      if (judgeDuration(startTime, endTime, 15)) {
+        this.search = ''
+        this.selectedPodName = '全部'
+        getLog({
+          node: 'minikube',
+          start_time: startTime / 1000,
+          end_time: endTime / 1000
+        }).then((res) => {
+          this.logList = this.initLogData(res)
+        }).catch((err) => {
+          this.logList = this.initLogData(logList)
+          message(err.message)
+        })
+      }
+    },
+    initLogData(data) {
+      return data.map((item) => {
+        return {
+          id: item._id,
+          podName: item._source.kubernetes.labels.app,
+          time: new Date(item._source['@timestamp']).toLocaleString(),
+          message: item._source.message,
+          showMessage: item._source.message,
+          detail: item
+        }
+      })
+    },
+    searchChange() {
+      if (!CSS.highlights) {
+        message('CSS Custom Highlight API not supported.')
+        return
+      }
+      CSS.highlights.clear()
+      const str = this.search.toLowerCase()
+      if (!str) return
+      this.$nextTick(() => {
+        const articles = document.getElementsByClassName('LQAE-article')
+        console.log(articles)
+        if (!articles) return
+        const allTextNodes = []
+        for (const article of articles) {
+          const treeWalker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT)
+          let currentNode = treeWalker.nextNode()
+          while (currentNode) {
+            allTextNodes.push(currentNode)
+            currentNode = treeWalker.nextNode()
+          }
+        }
+        const ranges = allTextNodes
+          .map((el) => {
+            return { el, text: el.textContent.toLowerCase() }
+          })
+          .map(({ text, el }) => {
+            const indices = []
+            let startPos = 0
+            while (startPos < text.length) {
+              const index = text.indexOf(str, startPos)
+              if (index === -1) break
+              indices.push(index)
+              startPos = index + str.length
+            }
+
+            // Create a range object for each instance of
+            // str we found in the text node.
+            return indices.map((index) => {
+              const range = new Range()
+              console.log(el, index)
+              range.setStart(el, index)
+              range.setEnd(el, index + str.length)
+              return range
+            })
+          })
+
+        // Create a Highlight object for the ranges.
+        const searchResultsHighlight = new Highlight(...ranges.flat())
+
+        // Register the Highlight object in the registry.
+        CSS.highlights.set('search-results', searchResultsHighlight)
+      })
     }
   }
 }

@@ -17,16 +17,29 @@
     </template>
 
     <template #card-r-1>
-      sss
+      <div class="DMT-card-r-1">
+        <header>
+          <CardTitle>
+            拓扑关系图
+          </CardTitle>
+        </header>
+        <main>
+          <TraceTopology />
+        </main>
+      </div>
     </template>
   </structure4>
 </template>
 
 <script>
 import structure4 from '@/components/Structure/structure4.vue'
+import TraceTopology from '@/components/TraceTopology'
+import CardTitle from '@/components/CardTitle'
 export default {
   components: {
-    structure4
+    structure4,
+    TraceTopology,
+    CardTitle
   },
   data() {
     return {
@@ -78,5 +91,17 @@ export default {
 .DMT-card-l-1__link--selected::after {
   transition: .3s;
   background: #E5F5FF;
+}
+.DMT-card-r-1 {
+  width: 100%;
+  height: 100%;
+}
+.DMT-card-r-1  > header{
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+.DMT-card-r-1  > main {
+  height: calc(100% - 30px);
 }
 </style>

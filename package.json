@@ -13,6 +13,8 @@
     "core-js": "^3.8.3",
     "echarts": "^5.5.0",
     "element-plus": "^2.7.1",
+    "nprogress": "^0.2.0",
+    "vis": "^4.21.0-EOL",
     "vue": "^3.2.13",
     "vue-json-viewer": "^3.0.4",
     "vue-router": "^4.0.3",

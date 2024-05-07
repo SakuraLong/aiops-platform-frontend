@@ -1,20 +1,23 @@
-*[color-type="cpu"] {
+*[color-type="cpu"],
+*[color-type="emailservice"]  {
   --base-color: #00a0ff;
   --light-color: #e5f5ff;
   --shadow-color: rgba(0, 160, 255, 0.5);
 }
-*[color-type="pod-failure"] {
+*[color-type="pod-failure"],
+*[color-type="checkoutservice"] {
   --base-color: #f98b71;
   --light-color: #fef3f0;
   --shadow-color: rgba(255, 149, 0, 0.5);
 }
-*[color-type="network-delay"] {
+*[color-type="network-delay"],
+*[color-type="recommendationservice"] {
   --base-color: #4ac6c4;
   --light-color: #e4ffff;
   --shadow-color: rgba(0, 255, 229, 0.5);
 }
 *[color-type="memory"],
-*[color-type="frontend"]  {
+*[color-type="frontend"] {
   --base-color: #57cf95;
   --light-color: #eefbf5;
   --shadow-color: rgba(0, 255, 38, 0.5);
@@ -31,7 +34,8 @@
   --light-color: #ffe8f9;
   --shadow-color: rgba(255, 0, 119, 0.5);
 }
-*[color-type="delay"] {
+*[color-type="delay"],
+*[color-type="shippingservice"] {
   --base-color: #bfc74e;
   --light-color: #fdffe0;
   --shadow-color: rgba(255, 251, 0, 0.5);

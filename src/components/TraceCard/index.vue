@@ -5,11 +5,11 @@
     @click="click"
   >
     <header O-B>
-      <span>{{ data.path }}</span>
+      <span>{{ data.operation_name }}</span>
     </header>
     <main>
-      <span O-B>{{ data.duration }}ms</span>
-      <span>{{ data.time }}</span>
+      <span O-B>{{ data.duration / 1000 }}ms</span>
+      <span>{{ new Date(data.timestamp / 1000).toLocaleString() }}</span>
     </main>
   </div>
 </template>
@@ -66,11 +66,6 @@ export default {
   transition: .3s;
   color: white;
 }
-.trace-card:hover > main > span:nth-child(1),
-.trace-card--active > main > span:nth-child(1) {
-  transition: .3s;
-  background-color: rgba(255, 255, 255, 0.2);
-}
 .trace-card > header {
   transition: .3s;
   color: #00A0FF;
@@ -98,5 +93,10 @@ export default {
 }
 .trace-card > main > span:nth-child(2) {
   font-size: 12px;
+}
+.trace-card:hover > main > span:nth-child(1),
+.trace-card--active > main > span:nth-child(1) {
+  transition: .3s;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 </style>

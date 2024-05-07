@@ -8,7 +8,7 @@
             @nextWeek="nextWeek"
             @setWeek="setWeek"
           />
-          <span>检索到<span style="color: #00A0FF;">{{ 20 }}</span>条数据</span>
+          <span>检索到<span style="color: #00A0FF;">{{ faultAmount }}</span>条数据</span>
         </div>
         <div class="calendar-header__right">
           <div class="header__controller">
@@ -134,10 +134,14 @@
       <week
         v-if="weekShow"
         ref="week"
+        :select-type="selectValue"
+        @setFaultAmount="setFaultAmount"
       />
       <day
         v-if="!weekShow"
         ref="day"
+        :select-type="selectValue"
+        @setFaultAmount="setFaultAmount"
       />
     </div>
   </div>
@@ -181,7 +185,8 @@ export default {
       weekMonday: new Date().setDate(new Date().getDate() - new Date().getDay() + 1),
       weekShow: true,
       options: ['全部', 'cpu', 'pod-failure', 'network-delay', 'memory', 'loss', 'abort', 'delay'],
-      selectValue: '全部'
+      selectValue: '全部',
+      faultAmount: 0
     }
   },
   mounted() {
@@ -196,6 +201,9 @@ export default {
     },
     setWeek(weekMonday) {
       this.$refs.week.setWeek(weekMonday - 1000 * 60 * 60 * 24)
+    },
+    setFaultAmount(val) {
+      this.faultAmount = val
     },
     changeToTable() {
       this.$emit('changeDataShower', 'table')

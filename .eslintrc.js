@@ -10,6 +10,9 @@ module.exports = {
     node: true,
     es6: true
   },
+  globals: {
+    Highlight: true
+  },
   extends: ['plugin:vue/recommended', 'eslint:recommended'],
 
   // add your custom rules here

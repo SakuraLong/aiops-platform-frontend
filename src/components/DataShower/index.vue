@@ -10,6 +10,7 @@
         <card
           v-for="c, j in item.data"
           :key="j"
+          :data="c"
         />
       </el-collapse-item>
     </el-collapse>
@@ -18,7 +19,8 @@
 
 <script>
 import card from './card.vue'
-import { getGroundTruth } from '@/api/fault-list'
+import { getGroundTruth } from '@/api/faultList'
+import { message } from '@/utils/utils'
 export default {
   components: {
     card
@@ -26,39 +28,24 @@ export default {
   data() {
     return {
       activeNames: [],
-      data: [
-        {
-          date: '03-12',
-          data: [1, 2, 3, 4]
-        },
-        {
-          date: '03-12',
-          data: [1, 2, 3, 4]
-        },
-        {
-          date: '03-12',
-          data: [1, 2, 3, 4]
-        },
-        {
-          date: '03-12',
-          data: [1, 2, 3, 4]
-        }
-      ]
+      data: []
     }
   },
   mounted() {
     const now = Date.now()
     const week = 1000 * 60 * 60 * 24 * 7
     getGroundTruth({
-      start_time: now,
-      end_time: now - week
+      start_time: parseInt((now - week) / 1000),
+      end_time: parseInt(now / 1000)
     }).then((res) => {
+      console.log(res)
       const list = []
       const faultList = res.ground_truth
+      faultList.sort((a, b) => a.timestamp - b.timestamp)
       faultList.forEach((fault) => {
         const timestamp = fault.timestamp * 1000
         const time = new Date(timestamp)
-        const str = (time.getMonth() + 1).toString().padStart(2, '0') +  time.getDate().toString().padStart(2, '0')
+        const str = (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2, '0')
         if (list.length > 0) {
           if (list.at(-1).date === str) {
             list.at(-1).data.push(fault)
@@ -69,11 +56,10 @@ export default {
           date: str,
           data: [fault]
         })
-        this.data = faultList
+        this.data = list
       })
-      console.log(res)
     }).catch((err) => {
-      console.log(err)
+      message(err.message)
     })
   }
 }

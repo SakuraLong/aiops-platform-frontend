@@ -41,6 +41,7 @@
         <el-button
           type="primary"
           style="width: 100%;"
+          @click="login"
         >
           登 录
         </el-button>
@@ -66,6 +67,19 @@ export default {
       email: '',
       password: '',
       msg: ''
+    }
+  },
+  methods: {
+    login() {
+      if (!this.email) {
+        this.msg = '请输入邮箱'
+        return
+      }
+      if (!this.password) {
+        this.msg = '请输入密码'
+        return
+      }
+      this.msg = ''
     }
   }
 }

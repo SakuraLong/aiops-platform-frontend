@@ -1,15 +1,3 @@
-<!--
- * @FileDescription
- * 日历故障 按天显示
- * @Author
- * Wen Long
- * @Date
- * 2024/3/30
- * @LastEditors
- * Wen Long
- * @LastEditTime
- * 2024/4/2
- -->
 <template>
   <div>
     <!-- 类都在index.vue里面 因为week和day组件类共用 -->
@@ -37,10 +25,12 @@
       <tbody>
         <tr
           v-for="t, i in table.time"
-          :key="i" >
+          :key="i"
+        >
           <td
             :data-time="i > 0 ? t : null"
-            td-type="calendar">
+            td-type="calendar"
+          >
             <!--  -->
           </td>
         </tr>
@@ -48,15 +38,16 @@
       <table class="calendar-data-table">
         <thead>
           <tr>
-            <td/>
+            <td />
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td >
+            <td>
               <!--  -->
               <Card
                 v-for="d in data"
+                v-show="selectType === '全部' || selectType === d.data.failure_type"
                 :key="d.drawId"
                 :v-if="d.draw"
                 :type="d.data.failure_type"
@@ -68,12 +59,13 @@
       </table>
       <div
         ref="timeline"
-        class="calendar-time-line">
-        <div time-type="left"/>
+        class="calendar-time-line"
+      >
+        <div time-type="left" />
         <div time-type="time">
-          <span ref="timelineHour"/>:<span ref="timelineMinutes"/>
+          <span ref="timelineHour" />:<span ref="timelineMinutes" />
         </div>
-        <div time-type="right"/>
+        <div time-type="right" />
       </div>
     </table>
   </div>
@@ -85,6 +77,12 @@ import Card from './card.vue'
 export default {
   components: {
     Card
+  },
+  props: {
+    selectType: {
+      default: '全部',
+      type: String
+    }
   },
   data() {
     return {
@@ -98,7 +96,13 @@ export default {
       },
       calendarDataManager: null,
       data: [],
-      timer: null
+      timer: null,
+      faultAmount: 0
+    }
+  },
+  watch: {
+    selectType() {
+      this.updateFaultAmount()
     }
   },
   mounted() {
@@ -134,8 +138,10 @@ export default {
       const day = tday[0]
       this.data = data
       this.table.typeAmount = []
+      this.faultAmount = 0
       data.forEach((err) => {
         const type = err.data.failure_type
+        this.faultAmount++
         const ele = this.table.typeAmount.find((ele) => ele.type === type)
         if (ele === undefined) {
           this.table.typeAmount.push({
@@ -150,6 +156,7 @@ export default {
       this.table.D = day.D
       this.table.d = day.d
       this.table.M = day.M
+      this.$emit('setFaultAmount', this.faultAmount)
     },
     lastDay() {
       this.calendarDataManager.lastDay()
@@ -186,6 +193,26 @@ export default {
           analyse(new Date().getTime())
         }, 60 * 1000)
       }, 60 * 1000 - s * 1000)
+    },
+    updateFaultAmount() {
+      this.table.typeAmount = []
+      this.faultAmount = 0
+      this.data.forEach((err) => {
+        this.faultAmount++
+        const type = err.data.failure_type
+        if (this.selectType !== '全部' && this.selectType !== type) return
+        const ele = this.table.typeAmount.find((ele) => ele.type === type)
+        if (ele === undefined) {
+          this.table.typeAmount.push({
+            type: type,
+            amount: 1
+          })
+        } else {
+          ele.amount++
+        }
+      })
+      this.table.typeAmount.sort((a, b) => a.amount - b.amount)
+      this.$emit('setFaultAmount', this.faultAmount)
     }
   }
 }

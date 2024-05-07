@@ -3,7 +3,7 @@
     <el-table
       :data="renderData"
       style="width: 100%"
-      max-height="100%"
+      height="100%"
     >
       <el-table-column
         label="Method"
@@ -23,12 +23,12 @@
       <el-table-column
         prop="duration"
         label="持续时间(ms)"
-        width="200"
+        width="100"
       />
       <el-table-column
         prop="cmdb_id"
         label="Service"
-        width="250"
+        min-width="180"
       />
     </el-table>
   </div>
@@ -48,6 +48,11 @@ export default {
       renderData: []
     }
   },
+  watch: {
+    data() {
+      this.initData()
+    }
+  },
   mounted() {
     this.initData()
   },
@@ -55,7 +60,8 @@ export default {
     initData() {
       this.renderData = this.data.map((item) => {
         const t = deepClone(item)
-        t.startTime = new Date(t.timestamp).toLocaleTimeString()
+        t.startTime = new Date(t.timestamp).toLocaleString()
+        t.duration /= 1000
         return t
       })
     }

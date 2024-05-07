@@ -1,3 +1,5 @@
+import { ElMessage } from 'element-plus'
+
 export const deepClone = (obj, cache = []) => {
   // 如果为普通数据类型，则直接返回，完成拷贝
   if (obj === null || typeof obj !== 'object') {
@@ -24,4 +26,73 @@ export const deepClone = (obj, cache = []) => {
     copy[key] = deepClone(obj[key], cache)
   })
   return copy
+}
+
+/**
+ * 检测区间超时情况
+ * @param {Number} s 起始时间戳
+ * @param {Number} e 结束时间戳
+ * @param {Number} duration 时长（min）
+ * @param {Boolean} msg 是否有超时提示（默认true）
+ * @returns Boolean 是否超时
+ */
+export function judgeDuration(s, e, duration, msg = true) {
+  const res = (e - s) / 1000 / 60 <= duration
+  if (!res) message('时间请限制在' + duration.toString() + '分钟内')
+  return res
+}
+
+/**
+ * 显示提示框
+ * @param {String} msg 提示信息
+ * @param {String} type 提示类型（默认error）
+ * @param {Number} duration 提示时长（默认3000(ms)）
+ */
+export function message(msg, type, duration) {
+  ElMessage({
+    message: msg,
+    type: type || 'error',
+    duration: duration || 3 * 1000
+  })
+}
+
+/**
+ * 防抖函数
+ * @param {Function} func 待执行的函数
+ * @param {Number} delay 防抖时间
+ * @returns Function
+ */
+export function debounce(func, delay) {
+  let timerId
+  return function(...args) {
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      func.apply(this, args)
+    }, delay)
+  }
+}
+
+/**
+ * 节流函数
+ * @param {Function} func 待执行的函数
+ * @param {Number} delay 防抖时间
+ * @returns Function
+ */
+export function throttle(func, delay) {
+  let timerId
+  let lastExecutedTime = 0
+  return function(...args) {
+    const currentTime = Date.now()
+    const timeSinceLastExecution = currentTime - lastExecutedTime
+    if (timeSinceLastExecution >= delay) {
+      func.apply(this, args)
+      lastExecutedTime = currentTime
+    } else {
+      clearTimeout(timerId)
+      timerId = setTimeout(() => {
+        func.apply(this, args)
+        lastExecutedTime = Date.now()
+      }, delay - timeSinceLastExecution)
+    }
+  }
 }

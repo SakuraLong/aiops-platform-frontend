@@ -112,7 +112,8 @@
 
 <script>
 import structure3 from '@/components/Structure/structure3.vue'
-import { algorithmResultQuery } from '@/api/algorithm'
+import { message } from '@/utils/utils'
+import { algorithmResultQuery, algorithmInterrupt } from '@/api/algorithm'
 export default {
   components: {
     structure3
@@ -124,15 +125,7 @@ export default {
       small: false,
       background: false,
       disabled: false,
-      tableData: [
-        {
-          id: '212121',
-          create_time: '2024-01-01 00:00:00',
-          name: '算法模板名称',
-          create_user: 'aaa',
-          state: '已完成'
-        }
-      ],
+      tableData: [],
       dialogVisible: false,
       interruptData: null
     }
@@ -155,7 +148,7 @@ export default {
       })
       this.tableData = list
     }).catch((err) => {
-      console.log(err)
+      message(err.message)
     })
   },
   methods: {
@@ -178,7 +171,13 @@ export default {
       this.dialogVisible = true
     },
     interruptAlgoConfirm() {
-      //
+      algorithmInterrupt({
+        id: this.interruptData.id
+      }).then(() => {
+        // success
+      }).catch((err) => {
+        message(err.message)
+      })
     }
   }
 

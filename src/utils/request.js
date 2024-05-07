@@ -49,11 +49,11 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    ElMessage({
-      message: error.message,
-      type: 'error',
-      duration: 3 * 1000
-    })
+    // ElMessage({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 3 * 1000
+    // })
     return Promise.reject(error)
   }
 )

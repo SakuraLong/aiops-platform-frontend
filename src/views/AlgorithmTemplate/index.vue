@@ -119,6 +119,8 @@ import PlatformDrawer from '@/components/PlatformDrawer'
 import ATDeleteDialog from '@/components/PlatformDialog/ATDeleteDialog.vue'
 import ATRunDialog from '@/components/PlatformDialog/ATRunDialog.vue'
 import ATNewDialog from '@/components/PlatformDialog/ATNewDialog.vue'
+import { algorithmQuery, algorithmRun } from '@/api/algorithm'
+import { message } from '@/utils/utils'
 export default {
   components: {
     structure3,
@@ -135,14 +137,7 @@ export default {
       background: false,
       disabled: false,
       total: 1299,
-      tableData: [
-        {
-          id: '212121',
-          name: '算法模板名称',
-          type: '算法类型',
-          intr: '算法介绍'
-        }
-      ],
+      tableData: [],
       visible: false,
       deleteDialogVisible: false,
       runDialogVisible: false,
@@ -153,7 +148,11 @@ export default {
     }
   },
   mounted() {
-
+    algorithmQuery().then((res) => {
+      this.tableData = res.list
+    }).catch((err) => {
+      message(err.message)
+    })
   },
   methods: {
     handleSizeChange(size) {
@@ -186,7 +185,6 @@ export default {
     runTemplate(row) {
       this.runTemplateData = row
       this.runDialogVisible = true
-      console.log(row)
     },
     deleteTemplate(row) {
       this.deleteTemplateData = {
@@ -201,7 +199,16 @@ export default {
       console.log(template)
     },
     runTemplateAfterConfirm(data) {
-      console.log(data)
+      algorithmRun({
+        id: data.data.id,
+        name: data.name,
+        start_time: parseInt(data.dataUseDuration[0].getTime() / 1000),
+        end_time: parseInt(data.dataUseDuration[1].getTime() / 1000)
+      }).then(() => {
+        message('运行成功', 'success')
+      }).catch((err) => {
+        message(err.message)
+      })
     },
     newTemplateAfterConfirm(template) {
       console.log(template)

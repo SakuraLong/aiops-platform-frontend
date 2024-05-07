@@ -5,15 +5,15 @@
         <div class="DME-metric-l__header-select">
           <span>PodName:</span>
           <el-select
-            v-model="selectedPodName"
+            v-model="selectedPodname"
             placeholder="Select"
             style="width: 120px"
             size="small"
           >
             <el-option
-              v-for="item in options"
+              v-for="item in podnameOptions"
               :key="item.value"
-              :label="item.label"
+              :label="item.value"
               :value="item.value"
             />
           </el-select>
@@ -21,8 +21,8 @@
         <div>
           <el-button
             size="small"
-            title="对检索的时间区间包含的日志导出"
-            @click="logDataExport"
+            title="对检索的时间区间包含的指标导出"
+            @click="metricDataExport"
           >
             <span O-R>导出</span>
             <template #icon>
@@ -43,27 +43,33 @@
           全选
         </el-checkbox>
         <el-checkbox-group
-          v-model="checkedCities"
+          v-model="selectedNames"
           class="DME-metric__checkbox-group"
-          @change="handleCheckedCitiesChange"
+          @change="handleCheckedNameChange"
         >
           <el-checkbox
-            v-for="city in cities"
-            :key="city"
-            :label="city"
-            :value="city"
+            v-for="name in metricsNames"
+            :key="name"
+            :label="name"
+            :value="name"
           >
-            {{ city }}
+            {{ name }}
           </el-checkbox>
         </el-checkbox-group>
       </main>
     </div>
     <div class="DME-metric__right">
-      <MetricCard />
-      <MetricCard />
-      <MetricCard />
-      <MetricCard />
-      <MetricCard />
+      <MetricCard
+        v-for="card in metricChartsShow"
+        :key="card"
+        ref="metricCard"
+        :name="card.name"
+        :pod="selectedPodname"
+        :style="{ '--name': card.name }"
+        class="DME-metric-chart"
+        @syncTime="syncTime"
+        @hideCard="hideCard"
+      />
     </div>
   </div>
 </template>
@@ -71,6 +77,7 @@
 <script>
 import CardTitle from '@/components/CardTitle'
 import MetricCard from '@/components/MetricCard'
+import { metricPodnameOptions, metricMetricsNames, metricMetricCharts } from '@/utils/staticData'
 export default {
   components: {
     CardTitle,
@@ -78,32 +85,70 @@ export default {
   },
   data() {
     return {
-      selectedPodName: '全部',
-      options: [
-        {
-          value: '全部',
-          label: '全部'
-        },
-        {
-          value: 'Option2',
-          label: 'Option2'
-        }
-      ],
       checkAll: false,
-      isIndeterminate: false,
-      checkedCities: [],
-      cities: new Array(20).fill(0).map((item, i) => i !== 15 ? i.toString() : 'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss')
+      isIndeterminate: true,
+      podnameOptions: metricPodnameOptions,
+      selectedPodname: 'checkoutservice',
+      metricsNames: metricMetricsNames,
+      selectedNames: [
+        'container_cpu_cfs_periods_total',
+        'container_cpu_cfs_throttled_seconds_total',
+        'container_cpu_load_average_10s',
+        'container_cpu_system_seconds_total',
+        'container_threads'
+      ],
+      metricCharts: metricMetricCharts,
+      metricChartsShow: []
     }
+  },
+  mounted() {
+    this.showCharts()
   },
   methods: {
     handleCheckAllChange(val) {
-      this.checkedCities = val ? this.cities : []
+      this.selectedNames = val ? this.metricsNames : []
       this.isIndeterminate = false
+      this.showCharts()
     },
-    handleCheckedCitiesChange(value) {
+    handleCheckedNameChange(value) {
       const checkedCount = value.length
-      this.checkAll = checkedCount === this.cities.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length
+      this.checkAll = checkedCount === this.metricsNames.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.metricsNames.length
+      this.showCharts()
+    },
+    showCharts() {
+      const pushCharts = () => {
+        this.selectedNames.forEach((select) => {
+          if (this.metricChartsShow.find(item => item.name === select) === undefined) {
+            this.metricChartsShow.unshift(this.metricCharts.find(item => item.name === select))
+          }
+        }) // 加入
+        this.metricChartsShow = this.metricChartsShow.filter((item) => this.selectedNames.indexOf(item.name) !== -1)
+        // 删除
+      }
+      pushCharts()
+      // 目前页面结构使用视图变换会出现渲染顺序不正确
+      // 视图变换强制在最顶层
+      // if (document.startViewTransition) { // 如果支持就视图变换
+      //   document.startViewTransition(() => { // 开始视图变换
+      //     pushCharts()
+      //   })
+      // } else { // 不支持就执行原来的逻辑
+      //   pushCharts()
+      // }
+    },
+    metricDataExport() {
+      //
+    },
+    syncTime(time) {
+      const metricCards = this.$refs.metricCard
+      for (const metricCard of metricCards) {
+        metricCard.receiveTime(time)
+      }
+    },
+    hideCard(name) {
+      this.selectedNames = this.selectedNames.filter((item) => item !== name)
+      this.showCharts()
     }
   }
 }
@@ -171,5 +216,19 @@ export default {
   justify-content: center;
   height: 100%;
   overflow: auto;
+}
+.DME-metric-chart {
+  view-transition-name: var(--name);
+}
+::view-transition-old(root) {
+    /* z-index: -1; */
+    /* animation: none; */
+}
+
+::view-transition-new(root) {
+    /* z-index: -1;
+  mix-blend-mode: normal; */
+    /* animation: clip 50s ease-in; */
+    /* transition: all 50s linear; */
 }
 </style>

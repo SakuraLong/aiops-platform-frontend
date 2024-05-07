@@ -1,21 +1,7 @@
 /**
- * @FileDescription
- * 日历数据管理器
- * @Author
- * Wen Long
- * @Date
- * 2024/3/30
- * @LastEditors
- * Wen Long
- * @LastEditTime
- * 2024/4/2
- */
-
-/**
  * 随机测试数据生成器生成器
  * @returns 随机测试数据生成器
  */
-// import { getGroundTruth } from '@/api/fault-list.js'
 function createRandomData() {
   const dataMap = new Map()
   const DAY = 1000 * 60 * 60 * 24
@@ -36,13 +22,7 @@ function createRandomData() {
     const m = date.getMonth() + 1
     const d = date.getDate()
     const key = y.toString() + '-' + m.toString() + '-' + d.toString()
-    console.log(y, m, d)
-    // getGroundTruth({
-    //   start_time: Math.floor(begin / 1000),
-    //   end_time: Math.floor(end / 1000)
-    // }).then((res) => {
-    //   console.log(y, m, d, res)
-    // })
+    // console.log(y, m, d)
     if (dataMap.get(key) !== undefined) {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -72,6 +52,9 @@ function createRandomData() {
     }
   }
 }
+
+import { getGroundTruth } from '@/api/faultList'
+import { message } from '@/utils/utils'
 
 class CalendarDataManager {
   constructor() {
@@ -354,6 +337,18 @@ class CalendarDataManager {
       if (dataMap.get(key) === undefined || !dataMap.get(key).query) {
         /* <----------------- 测试 -----------------> */
         const getData = await this.testDataCreater(begin, begin + this.DAY)
+        // const getData = await getGroundTruth({
+        //   start_time: Math.floor(begin / 1000),
+        //   end_time: Math.floor((begin + this.DAY) / 1000)
+        // }).then((res) => {
+        //   res.ground_truth.forEach((item) => {
+        //     item.timestamp *= 1000
+        //   })
+        //   return res.ground_truth
+        // }).catch((err) => {
+        //   message(err.message)
+        //   return []
+        // })
         const getDateAfter = []
         getData.forEach((data, i) => {
           getDateAfter.push({

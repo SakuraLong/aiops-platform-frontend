@@ -29,6 +29,7 @@
             range-separator="To"
             start-placeholder="Start date"
             end-placeholder="End date"
+            :disabled-date="judge"
           />
         </div>
       </div>
@@ -85,7 +86,8 @@ export default {
         name: '',
         dataUseDuration: null,
         mode: 'now',
-        timing: null
+        timing: null,
+        data: {}
       }
     }
   },
@@ -95,14 +97,25 @@ export default {
         return this.visible
       },
       set(val) {
+        this.$emit('update:visible', val)
         this.$emit('changeVisible', val)
       }
+    }
+  },
+  watch: {
+    data() {
+      this.runTemplateData.dataUseDuration = null
+      this.runTemplateData.name = ''
+      this.runTemplateData.data = this.data
     }
   },
   mounted() {
     this.runTemplateData.data = this.data
   },
   methods: {
+    judge(date) {
+      return date.getTime() >= Date.now()
+    },
     cancelFunc() {
       this.dialogVisible = false
       this.$emit('cancel')
