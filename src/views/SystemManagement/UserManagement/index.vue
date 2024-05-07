@@ -92,6 +92,7 @@
   </div>
 </template>
 <script>
+import { message } from '@/utils/utils'
 import CryptoJS from 'crypto-js'
 import { getRoleTypes, getUserList, addUser, updateUser, deleteUser, deleteBatchUser } from '@/api/system-management'
 export default {
@@ -143,6 +144,8 @@ export default {
     fetchRoleTypes() {
       getRoleTypes().then((data) => {
         this.roleTypes = data
+      }).catch((err) => {
+        message(err)
       })
     },
     fetchUsers() {
@@ -150,6 +153,8 @@ export default {
       getUserList().then((data) => {
         this.tableData = data
         this.filterTableData()
+      }).catch((err) => {
+        message(err)
       })
     },
     handleCreate() {
@@ -199,6 +204,8 @@ export default {
           // fetch
           this.fetchRoleTypes()
           this.fetchUsers()
+        }).catch((err) => {
+          message(err)
         })
       } else {
         addUser(this.item).then(() => {
@@ -206,6 +213,8 @@ export default {
           this.fetchRoleTypes()
           this.fetchUsers()
           // test
+        }).catch((err) => {
+          message(err)
         })
       }
       this.dialog.isShow = false
@@ -229,15 +238,17 @@ export default {
             this.fetchRoleTypes()
             this.fetchUsers()
           })
+        }).catch((err) => {
+          message(err)
         })
-        .catch(() => {})
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
         .then(() => {
           done()
+        }).catch((err) => {
+          message(err)
         })
-        .catch(() => {})
     },
     handleSearch() {
       this.filterTableData()
@@ -253,8 +264,9 @@ export default {
             this.fetchRoleTypes()
             this.fetchUsers()
           })
+        }).catch((err) => {
+          message(err)
         })
-        .catch(() => {})
     }
   }
 }

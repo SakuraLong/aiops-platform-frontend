@@ -157,9 +157,7 @@ const routes = [
         name: 'userManagement',
         component: UserManagement,
         meta: {
-          header: 'SystemManagement',
-          DMEName: 'userManagement',
-          DMETLName: 'error'
+          header: 'systemManagement'
         }
       },
       {
@@ -167,9 +165,7 @@ const routes = [
         name: 'roleManagement',
         component: RoleManagement,
         meta: {
-          header: 'SystemManagement',
-          DMEName: 'roleManagement',
-          DMETLName: 'error'
+          header: 'systemManagement'
         }
       }
     ],

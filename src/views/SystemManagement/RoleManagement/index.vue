@@ -77,6 +77,7 @@
 /**
  * headers and handleCreate need editing when modify the edge authority
  */
+import { message } from '@/utils/utils'
 import { getRoleList, addRole, updateRole, deleteRole } from '@/api/system-management'
 export default {
   data() {
@@ -158,6 +159,8 @@ export default {
       getRoleList().then((data) => {
         this.tableData = data
         this.filterTableData()
+      }).catch((err) => {
+        message(err.message)
       })
     },
     handleCreate() {
@@ -210,12 +213,16 @@ export default {
         updateRole(this.item).then(() => {
           // fetch
           this.fetchRoles()
+        }).catch((err) => {
+          message(err.message)
         })
       } else {
         addRole(this.item).then(() => {
           // fetch
           this.fetchRoles()
           // test
+        }).catch((err) => {
+          message(err.message)
         })
       }
       this.dialog.isShow = false
@@ -241,15 +248,17 @@ export default {
             // fetch
             this.fetchRoles()
           })
+        }).catch((err) => {
+          message(err)
         })
-        .catch(() => {})
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
         .then(() => {
           done()
+        }).catch((err) => {
+          message(err)
         })
-        .catch(() => {})
     },
     handleSearch() {
       this.filterTableData()
