@@ -63,9 +63,9 @@ export default {
           path: '/evaluateData'
         },
         {
-          name: '用户管理',
-          routeName: 'userManagement',
-          path: '/userManagement'
+          name: '系统管理',
+          routeName: 'systemManagement',
+          path: '/systemManagement'
         }
       ]
     }
