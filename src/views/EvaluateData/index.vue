@@ -137,7 +137,7 @@ export default {
   },
   mounted() {
     algorithmResultQuery().then((res) => {
-      const dict = ['队列中', '运行中', '已完成', '已中断']
+      const dict = ['队列中', '运行中', '已完成', '已中断', '运行失败']
       const list = res.list
       list.sort((a, b) => {
         return b.create_time - a.create_time
