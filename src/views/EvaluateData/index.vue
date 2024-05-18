@@ -172,6 +172,13 @@ export default {
     }).catch((err) => {
       message(err.message)
     })
+    this.queryAlgo()
+    // this.timer = setInterval(() => {
+    //   this.queryAlgo()
+    // }, 5000)
+  },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer)
   },
   methods: {
     handleSizeChange(size) {
@@ -191,7 +198,6 @@ export default {
     },
     queryAlgo() {
       algorithmResultQuery().then((res) => {
-        console.log(res)
         const dict = ['队列中', '运行中', '已完成', '已中断', '运行失败']
         const list = res.list
         list.sort((a, b) => {
