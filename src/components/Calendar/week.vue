@@ -144,7 +144,6 @@ export default {
      */
     async getData() {
       const data = await this.calendarDataManager.getDataSync()
-      console.log(data)
       const week = this.calendarDataManager.getCalendarShowDate()
       const date = []
       week.forEach((d) => {
@@ -190,7 +189,7 @@ export default {
       this.getData()
     },
     clickDataTd(index) {
-      console.log(index)
+      // console.log(index)
     },
     dblclickDataTd(index) {
       console.log('dbl', index)

@@ -21,12 +21,13 @@
       >{{ route.name }}</component>
     </div>
     <div class="header-right">
-      <router-link to="/client/login">登出</router-link>
+      <el-button text type="primary" @click="logout">登出</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { removeToken } from '@/utils/auth'
 export default {
   data() {
     return {
@@ -47,11 +48,11 @@ export default {
           routeName: 'dataMonitor',
           path: '/dataMonitor'
         },
-        // {
-        //   name: '算法管理',
-        //   routeName: 'algorithmManagement',
-        //   path: '/algorithmManagement'
-        // },
+        {
+          name: '数据导出',
+          routeName: 'dataExport',
+          path: '/dataExport'
+        },
         {
           name: '算法模板',
           routeName: 'algorithmTemplate',
@@ -68,6 +69,14 @@ export default {
           path: '/systemManagement'
         }
       ]
+    }
+  },
+  methods: {
+    logout() {
+      removeToken()
+      this.$router.push({
+        name: 'ClientLogin'
+      })
     }
   }
 }

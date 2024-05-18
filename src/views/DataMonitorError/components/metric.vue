@@ -59,17 +59,19 @@
       </main>
     </div>
     <div class="DME-metric__right">
-      <MetricCard
-        v-for="card in metricChartsShow"
-        :key="card"
-        ref="metricCard"
-        :name="card.name"
-        :pod="selectedPodname"
-        :style="{ '--name': card.name }"
-        class="DME-metric-chart"
-        @syncTime="syncTime"
-        @hideCard="hideCard"
-      />
+      <div>
+        <MetricCard
+          v-for="card in metricChartsShow"
+          :key="card"
+          ref="metricCard"
+          :name="card.name"
+          :pod="selectedPodname"
+          :style="{ '--name': card.name }"
+          class="DME-metric-chart"
+          @syncTime="syncTime"
+          @hideCard="hideCard"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -138,7 +140,12 @@ export default {
       // }
     },
     metricDataExport() {
-      //
+      this.$router.push({
+        name: 'DataExport',
+        query: {
+          type: 'metric'
+        }
+      })
     },
     syncTime(time) {
       const metricCards = this.$refs.metricCard
@@ -210,25 +217,17 @@ export default {
   overflow: auto;
 }
 .DME-metric__right {
+  height: 100%;
+  overflow: auto;
+}
+.DME-metric__right > div {
   display: flex;
   text-align: center;
   flex-wrap: wrap;
   justify-content: center;
-  height: 100%;
-  overflow: auto;
 }
 .DME-metric-chart {
   view-transition-name: var(--name);
-}
-::view-transition-old(root) {
-    /* z-index: -1; */
-    /* animation: none; */
-}
-
-::view-transition-new(root) {
-    /* z-index: -1;
-  mix-blend-mode: normal; */
-    /* animation: clip 50s ease-in; */
-    /* transition: all 50s linear; */
+  display: block;
 }
 </style>

@@ -30,18 +30,18 @@ export function algorithmResultDetail(params) {
   })
 }
 
-export function algorithmInterrupt(params) {
+export function algorithmInterrupt(data) {
   return request({
     url: '/algorithm-interrupt',
     method: 'delete',
-    params
+    data
   })
 }
 
-export function algorithmResultDelete(params) {
+export function algorithmResultDelete(data) {
   return request({
     url: '/algorithm-result-delete',
     method: 'delete',
-    params
+    data
   })
 }

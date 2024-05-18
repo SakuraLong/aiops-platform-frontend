@@ -72,3 +72,39 @@ body {
   background-color: #f06;
   color: white;
 }
+
+.platform-json-viewer {
+  text-align: left;
+  height: auto;
+}
+.platform-json-viewer > div:nth-of-type(1) {
+  text-align: right;
+}
+.platform-json-viewer > div:nth-of-type(2) {
+  height: auto;
+  max-height: 100% !important;
+  overflow: auto;
+}
+.platform-json-viewer > div:nth-of-type(3) {
+  display: none;
+}
+.platform-json-viewer > div:nth-of-type(1) > span {
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.05);
+  transition: .2s;
+  min-width: 4rem;
+  border-radius: 5px;
+  color: #374E5C;
+  margin: 0 5px;
+  font-family: "OPPOSans-B";
+  font-size: 14px;
+  text-align: center;
+}
+.platform-json-viewer > div:nth-of-type(1) > span:hover {
+  transition: .2s;
+  background-color: #00A0FF;
+  box-shadow: 0px 2px 8px 0px rgba(0,160,255,0.5);
+  color: white;
+}

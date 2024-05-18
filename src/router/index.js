@@ -13,6 +13,7 @@ import AlgorithmManagement from '@/views/AlgorithmManagement'
 import AlgorithmTemplate from '@/views/AlgorithmTemplate'
 import EvaluateData from '@/views/EvaluateData'
 
+import DataExport from '@/views/DataExport'
 import SystemManagement from '@/views/SystemManagement'
 import UserManagement from '@/views/SystemManagement/UserManagement'
 import RoleManagement from '@/views/SystemManagement/RoleManagement'
@@ -26,24 +27,25 @@ import reg from '@/views/Client/reg.vue'
 const routes = [
   {
     path: '/client',
-    name: 'client',
+    name: 'Client',
+    redirect: '/client/login',
     component: Client,
     children: [
       {
         path: 'login',
-        name: 'login',
+        name: 'ClientLogin',
         component: login
       },
       {
         path: 'reg',
-        name: 'reg',
+        name: 'ClientReg',
         component: reg
       }
     ]
   },
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: Home,
     meta: {
       header: 'home'
@@ -122,6 +124,22 @@ const routes = [
     name: 'DataMonitor',
     path: '/dataMonitor',
     redirect: '/dataMonitor/error/fault'
+  },
+  {
+    name: 'DataExport',
+    path: '/dataExport',
+    component: DataExport,
+    meta: {
+      header: 'dataExport'
+    }
+  },
+  {
+    name: 'DataDetailExport',
+    path: '/dataExport/:type',
+    component: DataExport,
+    meta: {
+      header: 'dataExport'
+    }
   },
   {
     name: 'AlgorithmManagement',

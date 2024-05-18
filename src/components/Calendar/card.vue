@@ -2,10 +2,13 @@
   <div
     ref="card"
     :color-type="type"
+    :class="{'calendar-card--triangle': triangle && height <= triangleMaxHeight }"
     class="calendar-card"
   >
-    <div>{{ data.data.failure_type }}</div>
-    <div>{{ str }}</div>
+    <div>
+      <div>{{ data.data.failure_type }}</div>
+      <div>{{ str }}</div>
+    </div>
   </div>
 </template>
 
@@ -32,6 +35,20 @@ export default {
     cardData: {
       default: () => {},
       type: Object
+    },
+    /**
+     * 是否有三角形提示
+     */
+    triangle: {
+      default: true,
+      type: Boolean
+    },
+    /**
+     * 是否有三角形提示
+     */
+    triangleMaxHeight: {
+      default: 10,
+      type: Number
     }
   },
   data() {
@@ -54,7 +71,8 @@ export default {
       ey: null, // 结束年
       eM: null, // 结束月
       ed: null, // 结束日
-      div: null // 小卡片根div
+      div: null, // 小卡片根div
+      height: 0
     }
   },
   mounted() {
@@ -64,8 +82,9 @@ export default {
     const top = this.s / this.ONE_HOUR * this.oneHourHeight + beforeHour * 0.8
     this.$refs.card.style.top = top.toString() + 'px'
     this.$refs.card.style.width = 'calc(' + (100 / this.ans * this.width).toString() + '% - 4px )'
-    this.$refs.card.style.left = (1 + this.index * (100 / this.ans)).toString() + '%'
-    this.$refs.card.style.height = ((this.f - this.s) / this.ONE_HOUR * this.oneHourHeight + durationHour * 2) + 'px'
+    this.$refs.card.style.left = 'calc(' + (this.index * (100 / this.ans)).toString() + '% + 0px)'
+    this.height = ((this.f - this.s) / this.ONE_HOUR * this.oneHourHeight + durationHour * 2)
+    this.$refs.card.style.height = this.height.toString() + 'px'
 
     const begin = new Date(this.data.data.timestamp)
     const end = new Date(this.data.data.timestamp + this.data.data.duration * 1000)
@@ -182,11 +201,12 @@ export default {
   position: absolute;
   border-radius: 4px;
   background-color: var(--light-color);
-  overflow: hidden;
+  overflow: visible;
   cursor: pointer;
   /* cursor: default; */
   transition: 0.3s all ease;
   border-left: 4px solid var(--base-color);
+  z-index: 1;
 }
 .calendar-card:hover {
   z-index: 900;
@@ -195,8 +215,13 @@ export default {
   background-color: var(--base-color);
   box-shadow: 0px 4px 16px 0px var(--shadow-color);
 }
-
 .calendar-card > div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.calendar-card > div > div {
   white-space: nowrap; /* 确保文本在一行内显示 */
   overflow: hidden; /* 超出容器部分隐藏 */
   text-overflow: ellipsis; /* 使用省略号表示被截断的文本 */
@@ -214,6 +239,16 @@ export default {
   padding: 4px;
   border-radius: 4px;
   box-shadow: 0px 4px 12px 0px rgba(165,183,193,0.3);
+}
+.calendar-card--triangle::after {
+  position: absolute;
+  z-index: 10;
+  content: " ";
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left: 6px solid var(--base-color);
 }
 
 </style>

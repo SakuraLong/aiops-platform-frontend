@@ -60,7 +60,7 @@
         <el-table-column
           prop="id"
           label="ID"
-          width="180"
+          width="250"
         />
         <el-table-column
           prop="podName"
@@ -129,6 +129,7 @@
       size="700px"
     >
       <JsonViewer
+        class="platform-json-viewer"
         :value="logData"
         theme="my-json-theme"
         copyable
@@ -213,7 +214,6 @@ export default {
       const after = '</span>'
       let startPos = 0
       while (startPos < lowerStr.length) {
-        console.log(startPos)
         const index = lowerStr.indexOf(lowerSearch, startPos)
         if (index === -1) break
         const target = str.slice(index, index + lowerSearch.length)
@@ -228,7 +228,14 @@ export default {
       this.showDetail = true
     },
     logDataExport() {
-      // 日志数据导出
+      this.$router.push({
+        name: 'DataExport',
+        query: {
+          type: 'log',
+          s: this.duration ? this.duration[0].getTime() : undefined,
+          f: this.duration ? this.duration[1].getTime() : undefined
+        }
+      })
     },
     logDataQuery() {
       // 日志数据查询
@@ -238,6 +245,7 @@ export default {
       if (judgeDuration(startTime, endTime, 15)) {
         this.search = ''
         this.selectedPodName = '全部'
+        message('开始搜索', 'success')
         getLog({
           node: 'minikube',
           start_time: startTime / 1000,
@@ -272,7 +280,6 @@ export default {
       if (!str) return
       this.$nextTick(() => {
         const articles = document.getElementsByClassName('LQAE-article')
-        console.log(articles)
         if (!articles) return
         const allTextNodes = []
         for (const article of articles) {
@@ -301,7 +308,6 @@ export default {
             // str we found in the text node.
             return indices.map((index) => {
               const range = new Range()
-              console.log(el, index)
               range.setStart(el, index)
               range.setEnd(el, index + str.length)
               return range

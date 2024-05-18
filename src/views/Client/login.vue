@@ -13,28 +13,34 @@
       <ClientRect />
     </header>
     <main>
-      <el-input
-        v-model="email"
-        size="large"
-        placeholder="请输入邮箱"
-        :prefix-icon="Search"
-      >
-        <template #prefix>
-          <el-icon class="el-input__icon"><Message /></el-icon>
-        </template>
-      </el-input>
-      <el-input
-        v-model="password"
-        size="large"
-        placeholder="请输入密码"
-        type="password"
-        show-password
-        :prefix-icon="Search"
-      >
-        <template #prefix>
-          <el-icon class="el-input__icon"><Lock /></el-icon>
-        </template>
-      </el-input>
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on">
+        <el-form-item prop="username">
+          <el-input
+            v-model="loginForm.username"
+            size="large"
+            placeholder="请输入用户名"
+            name="username"
+          >
+            <template #prefix>
+              <el-icon class="el-input__icon"><Message /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input
+            v-model="loginForm.password"
+            size="large"
+            placeholder="请输入密码"
+            type="password"
+            show-password
+            name="password"
+          >
+            <template #prefix>
+              <el-icon class="el-input__icon"><Lock /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
     </main>
     <footer>
       <div>
@@ -58,28 +64,57 @@
 
 <script>
 import ClientRect from '@/components/ClientRect'
+import { login } from '@/api/user'
+import { message } from '@/utils/utils'
+import { setToken, removeToken } from '@/utils/auth'
 export default {
   components: {
     ClientRect
   },
   data() {
     return {
-      email: '',
-      password: '',
+      loginForm: {
+        username: 'aiops@admin',
+        password: 'nkcs@aiops'
+      },
+      loginRules: {
+        username: [{ required: true, trigger: 'blur', message: '用户名未输入' }],
+        password: [{ required: true, trigger: 'blur', message: '密码未输入' }]
+      },
       msg: ''
     }
   },
   methods: {
     login() {
-      if (!this.email) {
-        this.msg = '请输入邮箱'
-        return
-      }
-      if (!this.password) {
-        this.msg = '请输入密码'
-        return
-      }
-      this.msg = ''
+      // if (!this.loginForm.username) {
+      //   this.msg = '请输入用户名'
+      //   return
+      // }
+      // if (!this.loginForm.password) {
+      //   this.msg = '请输入密码'
+      //   return
+      // }
+      // this.msg = ''
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          removeToken()
+          login({
+            username: this.loginForm.username,
+            password: this.loginForm.password
+          }).then((res) => {
+            setToken(res.token)
+            this.$router.push({
+              path: '/'
+            })
+          }).catch((err) => {
+            try {
+              this.msg = err.response.data.message
+            } catch {
+              this.msg = '网络故障'
+            }
+          })
+        }
+      })
     }
   }
 }

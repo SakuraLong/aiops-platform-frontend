@@ -8,21 +8,12 @@
 </template>
 
 <script>
-import { test } from '@/api/test'
 import Header from '@/components/Header'
 export default {
   components: {
     PageHeader: Header
   },
   mounted() {
-    // 用来测试和服务器是否连上
-    // test({
-    //   data: 'ascasc'
-    // }).then((res) => {
-    //   console.log(res)
-    // }).catch((err) => {
-    //   console.log(err)
-    // })
   }
 }
 </script>

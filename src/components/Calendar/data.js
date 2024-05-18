@@ -296,7 +296,7 @@ class CalendarDataManager {
    * @param {*} day 日期
    */
   setDay(day) {
-    //
+    this.SHOW_BEGIN = day
   }
 
   /**
@@ -336,19 +336,19 @@ class CalendarDataManager {
       const key = y.toString() + '-' + m.toString() + '-' + d.toString()
       if (dataMap.get(key) === undefined || !dataMap.get(key).query) {
         /* <----------------- 测试 -----------------> */
-        const getData = await this.testDataCreater(begin, begin + this.DAY)
-        // const getData = await getGroundTruth({
-        //   start_time: Math.floor(begin / 1000),
-        //   end_time: Math.floor((begin + this.DAY) / 1000)
-        // }).then((res) => {
-        //   res.ground_truth.forEach((item) => {
-        //     item.timestamp *= 1000
-        //   })
-        //   return res.ground_truth
-        // }).catch((err) => {
-        //   message(err.message)
-        //   return []
-        // })
+        // const getData = await this.testDataCreater(begin, begin + this.DAY)
+        const getData = await getGroundTruth({
+          start_time: Math.floor(begin / 1000),
+          end_time: Math.floor((begin + this.DAY) / 1000)
+        }).then((res) => {
+          res.ground_truth.forEach((item) => {
+            item.timestamp *= 1000
+          })
+          return res.ground_truth
+        }).catch((err) => {
+          message(err.message)
+          return []
+        })
         const getDateAfter = []
         getData.forEach((data, i) => {
           getDateAfter.push({
@@ -448,6 +448,9 @@ class CalendarDataManager {
       item.drawId = item.drawId ? item.drawId : this.generateRandomString()
       item.s = item.data.timestamp < begin ? 0 : item.data.timestamp - begin
       item.f = item.data.timestamp + item.data.duration * 1000 > end ? end - begin : item.data.timestamp + item.data.duration * 1000 - begin
+      /* 设置最小高度 最小高度是40min对应的高度 */
+      // item.f = item.f - item.s < 1000 * 60 * 40 ? item.s + 1000 * 60 * 40 : item.f // 设置最小高度
+      /* 设置最小高度 最小高度是40min对应的高度 */
       item.index = 0
       item.ans = 1
       item.width = 1

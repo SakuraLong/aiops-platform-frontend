@@ -38,7 +38,7 @@ export const deepClone = (obj, cache = []) => {
  */
 export function judgeDuration(s, e, duration, msg = true) {
   const res = (e - s) / 1000 / 60 <= duration
-  if (!res) message('时间请限制在' + duration.toString() + '分钟内')
+  if (!res && msg) message('时间请限制在' + duration.toString() + '分钟内')
   return res
 }
 
@@ -62,7 +62,7 @@ export function message(msg, type, duration) {
  * @param {Number} delay 防抖时间
  * @returns Function
  */
-export function debounce(func, delay) {
+export function debounce(func, delay = 200) {
   let timerId
   return function(...args) {
     clearTimeout(timerId)
@@ -94,5 +94,30 @@ export function throttle(func, delay) {
         lastExecutedTime = Date.now()
       }, delay - timeSinceLastExecution)
     }
+  }
+}
+
+/**
+   * 随机字符串生成函数生成器
+   * - 闭包存储map
+   * @returns 随机字符串生成函数
+   */
+export function generateRandomStringBase() {
+  const idMap = new Map()
+  idMap.set('', true)
+  return function(length = 10) {
+    let result = ''
+    const length_ = length
+    const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const charactersLength = characters.length
+
+    while (idMap.get(result) === true) {
+      for (let i = 0; i < length_; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      }
+    }
+    idMap.set(result, true)
+
+    return result
   }
 }

@@ -4,7 +4,7 @@
       <header O-R>
         <div>
           <el-date-picker
-            v-model="datetime"
+            v-model="duration"
             size="small"
             type="datetimerange"
             start-placeholder="Start date"
@@ -14,7 +14,7 @@
           />
           <el-button
             size="small"
-            :disabled="!datetime"
+            :disabled="!duration"
             @click="searchTraceList"
           >
             <template #icon>
@@ -24,7 +24,7 @@
           </el-button>
         </div>
         <div>
-          <el-button size="small">
+          <el-button size="small" @click="traceDataExport">
             <template #icon>
               <Download />
             </template>
@@ -52,7 +52,7 @@
       </footer>
     </div>
     <div class="DME-trace__right">
-      <header>
+      <header v-show="traceGraph.length > 0">
         <div class="DME-trace__detail">
           <div O-B>
             <span>{{ traceGraph[0] && traceGraph[0].operation_name }}</span>
@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       showGraph: true,
-      datetime: null,
+      duration: null,
       traceGraph: [],
       traceList: [],
       currentPage: 1,
@@ -141,7 +141,6 @@ export default {
         getTrace({
           trace_id: searchId
         }).then((res) => {
-          console.log(res)
           const traceGraph = res
           this.traceMap.set(searchId, deepClone(traceGraph))
           this.traceGraph = traceGraph
@@ -152,10 +151,11 @@ export default {
       }
     },
     searchTraceList() {
-      if (!this.datetime) return
-      const startTime = this.datetime[0].getTime()
-      const endTime = this.datetime[1].getTime()
+      if (!this.duration) return
+      const startTime = this.duration[0].getTime()
+      const endTime = this.duration[1].getTime()
       if (judgeDuration(startTime, endTime, 15)) {
+        message('开始搜索', 'success')
         getTraceList({
           start_time: startTime / 1000,
           end_time: endTime / 1000
@@ -163,10 +163,21 @@ export default {
           this.currentPage = 1
           this.activeTraceCard = -1
           this.traceList = res
+          this.clickTraceCard(0)
         }).catch((err) => {
           message(err.message)
         })
       }
+    },
+    traceDataExport() {
+      this.$router.push({
+        name: 'DataExport',
+        query: {
+          type: 'trace',
+          s: this.duration ? this.duration[0].getTime() : undefined,
+          f: this.duration ? this.duration[1].getTime() : undefined
+        }
+      })
     }
   }
 }
