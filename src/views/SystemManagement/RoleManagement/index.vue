@@ -78,7 +78,7 @@
  * headers and handleCreate need editing when modify the edge authority
  */
 import { message } from '@/utils/utils'
-import { getRoleList, addRole, updateRole, deleteRole } from '@/api/system-management'
+import { getRoleList, addRole, updateRole, deleteRole } from '@/api/systemManagement'
 export default {
   data() {
     return {

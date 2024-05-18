@@ -1,6 +1,6 @@
 <template>
   <el-card
-    style="width: 480px; margin: 10px;"
+    style="width: 480px; margin: 10px; height: auto"
     shadow="hover"
   >
     <template #header>
@@ -110,7 +110,6 @@ export default {
         ['2d', 1000 * 60 * 60 * 24 * 2]
       ],
       timeListIndex: 4,
-      chartPod: this.pod,
       debounceSearchData: null,
       chartData: []
     }
@@ -163,12 +162,12 @@ export default {
       const startTime = this.datetime.getTime() - duration
       const endTime = this.datetime.getTime()
       getMetric({
-        pod: this.chartPod,
+        pod: this.pod,
         metric_name: this.name,
         start_time: parseInt(startTime / 1000),
         end_time: parseInt(endTime / 1000)
       }).then((res) => {
-        console.log(res)
+        // console.log(res)
       }).catch((err) => {
         this.chartData = metricChartData
         this.draw()

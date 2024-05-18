@@ -14,6 +14,8 @@
     "crypto-js": "^4.2.0",
     "echarts": "^5.5.0",
     "element-plus": "^2.7.1",
+    "file-saver": "^2.0.5",
+    "js-cookie": "^3.0.5",
     "nprogress": "^0.2.0",
     "vis": "^4.21.0-EOL",
     "vue": "^3.2.13",

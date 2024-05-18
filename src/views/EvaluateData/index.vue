@@ -12,13 +12,15 @@
         </header>
         <main>
           <el-table
-            :data="tableData"
+            :data="showData"
             stripe
             style="width: 100%"
             height="100%"
+            @selection-change="selectionChange"
           >
+            <el-table-column type="selection" width="55" />
             <el-table-column
-              prop="create_time"
+              prop="createTimeStr"
               label="创建时间"
             />
             <el-table-column
@@ -26,17 +28,22 @@
               label="任务名称"
             />
             <el-table-column
+              prop="algorithm_name"
+              label="算法名称"
+            />
+            <el-table-column
               prop="create_user"
               label="创建者"
             />
             <el-table-column
-              prop="state"
+              prop="statusStr"
               label="状态"
             />
             <el-table-column label="操作">
               <template #default="scope">
                 <div style="display: flex; align-items: center">
                   <el-button
+                    :disabled="scope.row.status !== 2 && scope.row.status !== 4"
                     link
                     type="primary"
                     O-B
@@ -45,6 +52,7 @@
                     详情
                   </el-button>
                   <el-button
+                    :disabled="scope.row.status !== 1"
                     link
                     type="primary"
                     O-B
@@ -53,6 +61,7 @@
                     中断
                   </el-button>
                   <el-button
+                    :disabled="scope.row.status !== 2 && scope.row.status !== 3"
                     link
                     O-B
                     type="primary"
@@ -66,6 +75,13 @@
           </el-table>
         </main>
         <footer>
+          <el-button
+            type="danger"
+            :disabled="selectionList.length === 0"
+            @click="deleteData"
+          >
+            删除选中
+          </el-button>
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -99,7 +115,7 @@
             <el-button @click="dialogVisible = false">取消</el-button>
             <el-button
               type="primary"
-              @click="interruptAlgo"
+              @click="interruptAlgoConfirm"
             >
               中断
             </el-button>
@@ -111,9 +127,10 @@
 </template>
 
 <script>
+import store from '@/store'
 import structure3 from '@/components/Structure/structure3.vue'
 import { message } from '@/utils/utils'
-import { algorithmResultQuery, algorithmInterrupt } from '@/api/algorithm'
+import { algorithmResultQuery, algorithmInterrupt, algorithmResultDelete } from '@/api/algorithm'
 export default {
   components: {
     structure3
@@ -127,29 +144,27 @@ export default {
       disabled: false,
       tableData: [],
       dialogVisible: false,
-      interruptData: null
+      interruptData: null,
+      timer: null,
+      selectionList: []
     }
   },
   computed: {
+    showData() {
+      return this.tableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
+    },
     total() {
       return this.tableData.length
     }
   },
   mounted() {
-    algorithmResultQuery().then((res) => {
-      const dict = ['队列中', '运行中', '已完成', '已中断']
-      const list = res.list
-      list.sort((a, b) => {
-        return b.create_time - a.create_time
-      })
-      list.forEach((item) => {
-        item.create_time = new Date(item.create_time * 1000).toLocaleString()
-        item.state = dict[parseInt(item.state)]
-      })
-      this.tableData = list
-    }).catch((err) => {
-      message(err.message)
-    })
+    this.queryAlgo()
+    // this.timer = setInterval(() => {
+    //   this.queryAlgo()
+    // }, 5000)
+  },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer)
   },
   methods: {
     handleSizeChange(size) {
@@ -159,11 +174,30 @@ export default {
       console.log(number)
     },
     showDetail(row) {
+      store.state.algorithmDetail = row
       this.$router.push({
         path: '/algorithmDetail',
         query: {
           id: row.id
         }
+      })
+    },
+    queryAlgo() {
+      algorithmResultQuery().then((res) => {
+        console.log(res)
+        const dict = ['队列中', '运行中', '已完成', '已中断', '运行失败']
+        const list = res.list
+        list.sort((a, b) => {
+          return b.create_time - a.create_time
+        })
+        list.forEach((item) => {
+          item.status = parseInt(item.status)
+          item.createTimeStr = new Date(item.create_time * 1000).toLocaleString()
+          item.statusStr = dict[item.status]
+        })
+        this.tableData = list
+      }).catch((err) => {
+        message(err.message)
       })
     },
     interruptAlgo(row) {
@@ -177,6 +211,20 @@ export default {
         // success
       }).catch((err) => {
         message(err.message)
+      })
+    },
+    selectionChange(selectionList) {
+      this.selectionList = selectionList
+    },
+    deleteData() {
+      const deleteList = this.selectionList.map((item) => item.id)
+      algorithmResultDelete({
+        id_list: deleteList
+      }).then((res) => {
+        message('删除成功', 'success')
+        this.queryAlgo()
+      }).catch((err) => {
+        message('删除失败：' + err.response.data.message)
       })
     }
   }
@@ -196,7 +244,8 @@ export default {
   height: 40px;
   text-align: right;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
 }
 .ED-container > main {
   height: calc(100% - 40px * 2);

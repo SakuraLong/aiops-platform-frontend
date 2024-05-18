@@ -81,7 +81,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.meta.DMELName)
+    // console.log(this.$route.meta.DMELName)
   }
 }
 </script>

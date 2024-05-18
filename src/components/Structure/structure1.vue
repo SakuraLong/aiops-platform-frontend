@@ -1,5 +1,5 @@
 <template>
-  <structure ref="structure">
+  <structure>
     <template #left>
       <card>
         <template #default>
@@ -32,14 +32,6 @@ export default {
   components: {
     structure,
     card
-  },
-  methods: {
-    shadowEnter() {
-      this.$refs.structure.setShadow(true)
-    },
-    shadowLeave() {
-      this.$refs.structure.setShadow(false)
-    }
   }
 }
 </script>

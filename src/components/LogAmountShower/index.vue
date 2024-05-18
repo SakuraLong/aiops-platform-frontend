@@ -29,8 +29,10 @@ export default {
   },
   methods: {
     initLogNum() {
-      if (window.logNum) this.logNum = window.logNum
-      else {
+      if (window.logNum) {
+        this.logNum = window.logNum
+        this.drawChart()
+      } else {
         getLogNum().then((res) => {
           window.logNum = res
           this.logNum = res

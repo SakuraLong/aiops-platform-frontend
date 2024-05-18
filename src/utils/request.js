@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import store from '@/store'
-// import { getToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
+import router from '@/router'
 
 // create an axios instance
 const service = axios.create({
@@ -12,12 +13,11 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
-    if (store.getters.token) {
+    if (getToken()) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      // config.headers['X-Token'] = getToken()
+      config.headers['authorization'] = 'token ' + getToken()
     }
     return config
   },
@@ -48,12 +48,13 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    // ElMessage({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 3 * 1000
-    // })
+    if (error.response.status === 401) {
+      removeToken()
+      router.push({
+        name: 'ClientLogin'
+      })
+    }
+    console.log(error) // for debug
     return Promise.reject(error)
   }
 )

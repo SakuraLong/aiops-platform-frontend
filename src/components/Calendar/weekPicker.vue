@@ -1,10 +1,17 @@
 <template>
   <div class="week-picker">
-    <img
+    <!-- <img
       src="../../assets/images/主页/编组 8.png"
       draggable="false"
       @click="lastWeek"
-    >
+    > -->
+    <el-button size="small" @click="lastWeek">
+      <template #icon>
+        <el-icon>
+          <ArrowLeft />
+        </el-icon>
+      </template>
+    </el-button>
     <el-date-picker
       v-model="weekMonday"
       :clearable="false"
@@ -14,11 +21,18 @@
       size="small"
       @change="setWeek"
     />
-    <img
+    <!-- <img
       src="../../assets/images/主页/编组 8备份.png"
       draggable="false"
       @click="nextWeek"
-    >
+    > -->
+    <el-button size="small" @click="lastWeek">
+      <template #icon>
+        <el-icon>
+          <ArrowRight />
+        </el-icon>
+      </template>
+    </el-button>
   </div>
 </template>
 
@@ -53,7 +67,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .week-picker {
   display: flex;
   text-align: center;
@@ -64,5 +78,20 @@ export default {
   user-select: none;
   width: 25px;
   height: 25px;
+}
+.week-picker > button {
+  padding: 5px;
+}
+.week-picker > button:first-child {
+  border-radius: 4px 0px 0px 4px;
+}
+.week-picker > button:last-child {
+  border-radius: 0px 4px 4px 0px;
+}
+.week-picker > div {
+  border-radius: 0px !important;
+}
+.week-picker > div .el-input__wrapper {
+  width: 150px !important;
 }
 </style>

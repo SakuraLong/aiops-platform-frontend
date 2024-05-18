@@ -1,3 +1,4 @@
+<!-- 组件已废弃 -->
 <template>
   <div
     :select="select"

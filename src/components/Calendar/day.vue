@@ -116,7 +116,7 @@ export default {
     this.calendarDataManager.setType('day')
     this.getData()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.timer) clearInterval(this.timer)
   },
   methods: {

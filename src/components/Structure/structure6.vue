@@ -1,9 +1,14 @@
 <template>
   <structure :stype="3">
     <template #right>
-      <card :full="true">
+      <card style="height: calc(70px - 5px * 4);">
         <template #default>
           <slot name="card-r-1" />
+        </template>
+      </card>
+      <card style="height: calc(100% - 70px - 5px * 4);">
+        <template #default>
+          <slot name="card-r-2" />
         </template>
       </card>
     </template>
@@ -23,7 +28,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

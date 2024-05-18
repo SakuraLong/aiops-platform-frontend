@@ -38,10 +38,10 @@ export default {
       start_time: parseInt((now - week) / 1000),
       end_time: parseInt(now / 1000)
     }).then((res) => {
-      console.log(res)
+      // console.log(res)
       const list = []
       const faultList = res.ground_truth
-      faultList.sort((a, b) => a.timestamp - b.timestamp)
+      faultList.sort((a, b) => b.timestamp - a.timestamp)
       faultList.forEach((fault) => {
         const timestamp = fault.timestamp * 1000
         const time = new Date(timestamp)

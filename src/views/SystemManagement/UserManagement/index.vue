@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div O-R>
     <el-header height="32px" style="margin: 16px 0">
       <el-input v-model="prompt" style="margin-right: 16px; width: 200px" placeholder="请输入要搜索的用户名" suffix-icon="Edit" clearable @keyup.enter="handleSearch" @clear="handleSearch" />
       <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
@@ -94,7 +94,7 @@
 <script>
 import { message } from '@/utils/utils'
 import CryptoJS from 'crypto-js'
-import { getRoleTypes, getUserList, addUser, updateUser, deleteUser, deleteBatchUser } from '@/api/system-management'
+import { getRoleTypes, getUserList, addUser, updateUser, deleteUser, deleteBatchUser } from '@/api/systemManagement'
 export default {
   data() {
     return {

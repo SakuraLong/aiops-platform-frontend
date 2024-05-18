@@ -1,7 +1,7 @@
 <template>
   <div class="calendar">
-    <div class="calendar-header">
-      <div v-if="page === 'main'">
+    <header class="calendar-header">
+      <!-- <div v-if="page === 'main'">
         <div class="calendar-header__left">
           <weekPicker
             @lastWeek="lastWeek"
@@ -48,102 +48,42 @@
             >
               数据监控
             </el-button>
-            <!-- <el-button
-              size="small"
-              type="primary"
-            >
-              导出
-            </el-button> -->
           </div>
         </div>
-      </div>
-      <div v-if="page === 'faultInjection'">
-        <div class="calendar-header__left">
-          <weekPicker
-            @lastWeek="lastWeek"
-            @nextWeek="nextWeek"
-            @setWeek="setWeek"
-          />
-        </div>
-        <div class="calendar-header__right">
-          <div class="header__controller">
-            <div class="controller__weekday">
-              <span
-                :class="{'controller__weekday--selected': !weekShow}"
-                @click="weekShow = false"
-              >
-                日
-              </span>
-              <span
-                :class="{'controller__weekday--selected': weekShow}"
-                @click="weekShow = true"
-              >
-                周
-              </span>
-            </div>
-          </div>
-          <div class="data__controller">
-            <faultButton
-              type="list"
-              select="true"
-            >列表</faultButton>
-            <faultButton
-              type="table"
-              @click="changeToTable"
-            >表格</faultButton>
-          </div>
-        </div>
-      </div>
-      <div v-if="page === 'dataMoniter'">
-        <div class="calendar-header__left">
-          <weekPicker
-            @lastWeek="lastWeek"
-            @nextWeek="nextWeek"
-            @setWeek="setWeek"
-          />
-        </div>
-        <div class="calendar-header__right">
-          <div class="header__controller">
-            <div class="controller__weekday">
-              <span
-                :class="{'controller__weekday--selected': !weekShow}"
-                @click="weekShow = false"
-              >
-                日
-              </span>
-              <span
-                :class="{'controller__weekday--selected': weekShow}"
-                @click="weekShow = true"
-              >
-                周
-              </span>
-            </div>
-          </div>
-          <div class="data__controller">
-            <!-- <el-button
-              size="small"
-              type="primary"
-            >
-              导出
-            </el-button> -->
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="calendar-body">
+      </div> -->
+      <headerMain
+        v-if="page === 'main'"
+        ref="header"
+        v-model:selectFault="selectFault"
+        v-model:weekShow="weekShow"
+        :fault-amount="faultAmount"
+        :select-fault-options="selectFaultOptions"
+        @change="headerChange"
+      />
+      <headerMonitor
+        v-if="page === 'dataMoniter'"
+        ref="header"
+        v-model:selectFault="selectFault"
+        v-model:weekShow="weekShow"
+        :fault-amount="faultAmount"
+        :select-fault-options="selectFaultOptions"
+        @change="headerChange"
+      />
+    </header>
+    <main class="calendar-body">
       <week
         v-if="weekShow"
         ref="week"
-        :select-type="selectValue"
+        :select-type="selectFault"
         @setFaultAmount="setFaultAmount"
       />
       <day
         v-if="!weekShow"
         ref="day"
-        :select-type="selectValue"
+        :select-type="selectFault"
         @setFaultAmount="setFaultAmount"
       />
-    </div>
+    </main>
   </div>
 </template>
 
@@ -155,17 +95,16 @@
  * 页面style不能用scoped!!!本页面style有涉及到其子组件共用的情况，不能设置scoped，否则子组件用不了
  * (当然你也可以选择在子组件（week和day）重写两遍相似的css
  */
-import router from '@/router'
+import headerMonitor from './headerMonitor.vue'
+import headerMain from './headerMain.vue'
 import week from './week.vue'
 import day from './day.vue'
-import weekPicker from './weekPicker.vue'
-import faultButton from '@/components/Button/faultButton.vue'
 export default {
   components: {
     week,
     day,
-    weekPicker,
-    faultButton
+    headerMain,
+    headerMonitor
   },
   props: {
     /**
@@ -184,9 +123,20 @@ export default {
     return {
       weekMonday: new Date().setDate(new Date().getDate() - new Date().getDay() + 1),
       weekShow: true,
-      options: ['全部', 'cpu', 'pod-failure', 'network-delay', 'memory', 'loss', 'abort', 'delay'],
-      selectValue: '全部',
+      selectFaultOptions: ['全部', 'cpu', 'pod-failure', 'network-delay', 'memory', 'loss', 'abort', 'delay'],
+      selectFault: '全部',
       faultAmount: 0
+    }
+  },
+  watch: {
+    weekShow() {
+      this.$nextTick(() => {
+        if (this.weekShow) {
+          this.$refs.week.setWeek(this.$refs.header.getTime())
+        } else {
+          this.$refs.day.setDay(this.$refs.header.getTime())
+        }
+      })
     }
   },
   mounted() {
@@ -209,13 +159,25 @@ export default {
       this.$emit('changeDataShower', 'table')
     },
     toDataMonitor() {
-      router.push({
+      this.$router.push({
         path: '/dataMonitor'
       })
     },
-    showD() {
-      this.drawer = true
-      console.log(this.drawer)
+    headerChange(type, data) {
+      switch (type) {
+        case 'timePicker':
+          this.timePickerChange(data)
+          break
+        default:
+          break
+      }
+    },
+    timePickerChange(data) {
+      if (this.weekShow) {
+        this.$refs.week.setWeek(data.timestamp)
+      } else {
+        this.$refs.day.setDay(data.timestamp)
+      }
     }
   }
 }
@@ -271,6 +233,14 @@ export default {
 .controller__weekday--selected {
   color: #00A0FF;
   background-color: #E5F5FF;
+}
+.data__controller__link {
+  text-align: center;
+  padding: 6px !important;
+  min-width: 0 !important;
+  width: auto !important;
+  font-size: 13px !important;
+  line-height: 14px !important;
 }
 
 /* week and day */
@@ -401,6 +371,7 @@ div[d-type=data-ele] {
   height: 1px;
   width: 100%;
   background-color: #00A0FF;
+  z-index: 800;
 }
 .calendar-time-line div[time-type='left'],
 .calendar-time-line div[time-type='right'] {

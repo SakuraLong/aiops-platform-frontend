@@ -5,7 +5,7 @@
         <!-- 暂时先不放东西了 -->
       </div>
       <div
-        v-show="typeSet.length > 0"
+        v-show="typeSet.size > 0"
         class="TG-header__type-list"
       >
         <span>类别:</span>
@@ -139,7 +139,7 @@ export default {
         return
       }
       const main = this.$refs.main
-      const mainWidth = main.clientWidth - this.marginLeft
+      const mainWidth = main.clientWidth - this.marginLeft - 8 // -8 是为了减去竖向滚动条宽度 保证底部不出现横向滚动条
       const renderByData = this.renderByData
       const fullDuration = renderByData[0].duration
       const minNeed = fullDuration / this.lineDuration * this.lineMinWidth
