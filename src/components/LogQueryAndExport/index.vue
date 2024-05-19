@@ -144,7 +144,6 @@ import PlatformDrawer from '@/components/PlatformDrawer'
 import JsonViewer from 'vue-json-viewer'
 import { getLog } from '@/api/log'
 import { judgeDuration, message } from '@/utils/utils'
-import { logList } from '@/utils/test'
 export default {
   components: {
     PlatformDrawer,
@@ -253,7 +252,7 @@ export default {
         }).then((res) => {
           this.logList = this.initLogData(res)
         }).catch((err) => {
-          this.logList = this.initLogData(logList)
+          this.logList = this.initLogData([])
           message(err.message)
         })
       }

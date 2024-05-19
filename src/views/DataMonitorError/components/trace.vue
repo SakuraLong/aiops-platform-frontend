@@ -100,11 +100,9 @@
 import TraceCard from '@/components/TraceCard'
 import TraceGraph from '@/components/TraceGraph'
 import TraceTable from '@/components/TraceTable'
-import { traceGraph, traceList } from '@/utils/test'
 import { getTraceList, getTrace } from '@/api/trace'
 import { judgeDuration, message, deepClone } from '@/utils/utils'
 export default {
-  name: 'Trace',
   components: {
     TraceCard,
     TraceGraph,

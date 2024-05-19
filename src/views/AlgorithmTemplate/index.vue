@@ -156,10 +156,10 @@ export default {
   },
   methods: {
     handleSizeChange(size) {
-      console.log(size)
+      // console.log(size)
     },
     handleCurrentChange(number) {
-      console.log(number)
+      // console.log(number)
     },
     showTemplate(row) {
       this.visible = true
@@ -196,7 +196,7 @@ export default {
       this.deleteDialogVisible = true
     },
     deleteTemplateAfterConfirm(template) {
-      console.log(template)
+      // console.log(template)
     },
     runTemplateAfterConfirm(data) {
       algorithmRun({
@@ -211,7 +211,7 @@ export default {
       })
     },
     newTemplateAfterConfirm(template) {
-      console.log(template)
+      // console.log(template)
     }
   }
 

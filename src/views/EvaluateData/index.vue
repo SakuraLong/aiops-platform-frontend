@@ -26,20 +26,28 @@
             <el-table-column
               prop="name"
               label="任务名称"
+              min-width="100"
             />
             <el-table-column
-              prop="algorithm_name"
+              prop="algorithm.name"
               label="算法名称"
+            />
+            <el-table-column
+              prop="id"
+              label="ID"
             />
             <el-table-column
               prop="create_user"
               label="创建者"
             />
-            <el-table-column
-              prop="statusStr"
-              label="状态"
-            />
-            <el-table-column label="操作">
+            <el-table-column label="状态">
+              <template #default="scope">
+                <el-text :type="scope.row.type" tag="b">
+                  {{ scope.row.statusStr }}
+                </el-text>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" width="180">
               <template #default="scope">
                 <div style="display: flex; align-items: center">
                   <el-button
@@ -52,7 +60,7 @@
                     详情
                   </el-button>
                   <el-button
-                    :disabled="scope.row.status !== 1"
+                    :disabled="scope.row.status !== 0 && scope.row.status !== 1"
                     link
                     type="primary"
                     O-B
@@ -61,11 +69,11 @@
                     中断
                   </el-button>
                   <el-button
-                    :disabled="scope.row.status !== 2 && scope.row.status !== 3"
+                    :disabled="scope.row.status === 0 || scope.row.status === 1"
                     link
                     O-B
                     type="primary"
-                    @click="showDetail(scope.row)"
+                    @click="algoRunAgain(scope.row)"
                   >
                     再次执行
                   </el-button>
@@ -75,13 +83,28 @@
           </el-table>
         </main>
         <footer>
-          <el-button
-            type="danger"
-            :disabled="selectionList.length === 0"
-            @click="deleteData"
-          >
-            删除选中
-          </el-button>
+          <span>
+            <el-button
+              type="danger"
+              :disabled="selectionList.length === 0"
+              plain
+              @click="deleteData"
+            >
+              删除选中
+            </el-button>
+            <el-button
+              type="primary"
+              plain
+              @click="queryAlgo"
+            >
+              <template #icon>
+                <el-icon>
+                  <Refresh />
+                </el-icon>
+              </template>
+              刷新
+            </el-button>
+          </span>
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -108,8 +131,8 @@
         align-center
       >
         <span>是否中断任务：{{ interruptData.name }}</span>
-        <div>创建者：{{ interruptData.user }}</div>
-        <div>创建时间：{{ interruptData.time }}</div>
+        <div>创建者：{{ interruptData.create_user }}</div>
+        <div>创建时间：{{ interruptData.createTimeStr }}</div>
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="dialogVisible = false">取消</el-button>
@@ -130,7 +153,7 @@
 import store from '@/store'
 import structure3 from '@/components/Structure/structure3.vue'
 import { message } from '@/utils/utils'
-import { algorithmResultQuery, algorithmInterrupt, algorithmResultDelete } from '@/api/algorithm'
+import { algorithmResultQuery, algorithmInterrupt, algorithmResultDelete, algorithmRun } from '@/api/algorithm'
 export default {
   components: {
     structure3
@@ -145,7 +168,6 @@ export default {
       tableData: [],
       dialogVisible: false,
       interruptData: null,
-      timer: null,
       selectionList: []
     }
   },
@@ -158,34 +180,14 @@ export default {
     }
   },
   mounted() {
-    algorithmResultQuery().then((res) => {
-      const dict = ['队列中', '运行中', '已完成', '已中断', '运行失败']
-      const list = res.list
-      list.sort((a, b) => {
-        return b.create_time - a.create_time
-      })
-      list.forEach((item) => {
-        item.create_time = new Date(item.create_time * 1000).toLocaleString()
-        item.state = dict[parseInt(item.state)]
-      })
-      this.tableData = list
-    }).catch((err) => {
-      message(err.message)
-    })
     this.queryAlgo()
-    // this.timer = setInterval(() => {
-    //   this.queryAlgo()
-    // }, 5000)
-  },
-  beforeUnmount() {
-    if (this.timer) clearInterval(this.timer)
   },
   methods: {
     handleSizeChange(size) {
-      console.log(size)
+      // console.log(size)
     },
     handleCurrentChange(number) {
-      console.log(number)
+      // console.log(number)
     },
     showDetail(row) {
       store.state.algorithmDetail = row
@@ -197,8 +199,10 @@ export default {
       })
     },
     queryAlgo() {
+      message('查询中', 'success')
       algorithmResultQuery().then((res) => {
         const dict = ['队列中', '运行中', '已完成', '已中断', '运行失败']
+        const typeDict = [null, 'primary', 'success', 'warning', 'danger']
         const list = res.list
         list.sort((a, b) => {
           return b.create_time - a.create_time
@@ -207,10 +211,12 @@ export default {
           item.status = parseInt(item.status)
           item.createTimeStr = new Date(item.create_time * 1000).toLocaleString()
           item.statusStr = dict[item.status]
+          item.type = typeDict[item.status]
         })
         this.tableData = list
+        message('查询完成', 'success')
       }).catch((err) => {
-        message(err.message)
+        message('查询失败：' + err.message)
       })
     },
     interruptAlgo(row) {
@@ -218,12 +224,14 @@ export default {
       this.dialogVisible = true
     },
     interruptAlgoConfirm() {
+      this.dialogVisible = false
       algorithmInterrupt({
         id: this.interruptData.id
       }).then(() => {
-        // success
+        message('中断成功', 'success')
+        this.queryAlgo()
       }).catch((err) => {
-        message(err.message)
+        message('中断失败：' + err.message)
       })
     },
     selectionChange(selectionList) {
@@ -238,6 +246,20 @@ export default {
         this.queryAlgo()
       }).catch((err) => {
         message('删除失败：' + err.response.data.message)
+      })
+    },
+    algoRunAgain(row) {
+      const data = row
+      algorithmRun({
+        id: data.algorithm.id,
+        name: data.name,
+        start_time: data.algorithm.start_time,
+        end_time: data.algorithm.end_time
+      }).then(() => {
+        message('运行成功', 'success')
+        this.queryAlgo()
+      }).catch((err) => {
+        message(err.message)
       })
     }
   }

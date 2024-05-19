@@ -78,7 +78,7 @@ export function debounce(func, delay = 200) {
  * @param {Number} delay 防抖时间
  * @returns Function
  */
-export function throttle(func, delay) {
+export function throttle(func, delay = 200) {
   let timerId
   let lastExecutedTime = 0
   return function(...args) {

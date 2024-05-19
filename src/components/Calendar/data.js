@@ -337,6 +337,7 @@ class CalendarDataManager {
       if (dataMap.get(key) === undefined || !dataMap.get(key).query) {
         /* <----------------- 测试 -----------------> */
         // const getData = await this.testDataCreater(begin, begin + this.DAY)
+        /* <----------------- 测试 -----------------> */
         const getData = await getGroundTruth({
           start_time: Math.floor(begin / 1000),
           end_time: Math.floor((begin + this.DAY) / 1000)
@@ -349,13 +350,13 @@ class CalendarDataManager {
           message(err.message)
           return []
         })
+
         const getDateAfter = []
         getData.forEach((data, i) => {
           getDateAfter.push({
             data: this.deepClone(data)
           })
         })
-        /* <----------------- 测试 -----------------> */
         const todayData = dataMap.get(key) === undefined ? getDateAfter : getDateAfter.concat(dataMap.get(key).data)
         const tempRes = this.afterProcessing(begin, todayData)
         if (tempRes.tomorrow.length !== 0) {

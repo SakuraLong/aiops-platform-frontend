@@ -19,7 +19,7 @@
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <el-button
-              v-show="scope.row.status === 1 || scope.row.status === 2"
+              v-if="scope.row.status === 1 || scope.row.status === 2"
               link
               O-B
               type="primary"
