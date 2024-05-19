@@ -8,7 +8,6 @@
 import { getLogNum } from '@/api/log'
 import { message } from '@/utils/utils'
 import * as echarts from 'echarts'
-import { logAmount } from '@/utils/test'
 export default {
   data() {
     return {
@@ -38,8 +37,7 @@ export default {
           this.logNum = res
           this.drawChart()
         }).catch((err) => {
-          this.logNum = logAmount
-          this.drawChart()
+          this.logNum = []
           message(err.message)
         })
       }

@@ -79,7 +79,6 @@
 import * as echarts from 'echarts'
 import { debounce, message } from '@/utils/utils'
 import { getMetric } from '@/api/metric'
-import { metricChartData } from '@/utils/test'
 export default {
   props: {
     name: {
@@ -167,9 +166,10 @@ export default {
         start_time: parseInt(startTime / 1000),
         end_time: parseInt(endTime / 1000)
       }).then((res) => {
-        // console.log(res)
+        this.chartData = res
+        this.draw()
       }).catch((err) => {
-        this.chartData = metricChartData
+        this.chartData = []
         this.draw()
         message(err.message)
       })

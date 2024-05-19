@@ -1,24 +1,40 @@
 <template>
   <structure3>
     <template #card-r-1>
-      <div>
+      <div class="AD-container">
         <header>
           <CardTitle>
-            算法：{{ detail.algorithm_name }}
+            算法：{{ detail.algorithm.name }}
           </CardTitle>
-          <el-table :data="[detail]" style="width: 100%">
+          <div class="AD-header-back">
+            <el-button size="small" type="primary" plain @click="back">
+              <template #icon>
+                <el-icon>
+                  <Back />
+                </el-icon>
+              </template>
+              返回
+            </el-button>
+          </div>
+          <el-table :data="[detail]" style="width: 100%" show-overflow-tooltip>
             <el-table-column prop="createTimeStr" label="创建时间" width="250" />
             <el-table-column prop="create_user" label="创建者" width="180" />
             <el-table-column prop="name" label="任务名称" />
             <el-table-column prop="id" label="任务ID" />
           </el-table>
-          <el-table :data="metric" style="width: 100%">
+          <el-table :data="metric" style="width: 100%" show-overflow-tooltip>
             <el-table-column prop="precision" label="precision" />
             <el-table-column prop="recall" label="recall" />
             <el-table-column prop="f1score" label="f1score" />
           </el-table>
         </header>
         <main>
+          <CardTitle v-if="failureRes">
+            <span style="color: #f56c6c;">运行失败</span>
+          </CardTitle>
+          <div v-if="failureRes">
+            <span>失败原因：{{ failureRes }}</span>
+          </div>
           <CardTitle>实际值</CardTitle>
           <div class="AD-chart-container">
             <el-empty v-show="!labelChart" class="AD-chart AD-chart--empty" description="暂无数据" />
@@ -52,27 +68,33 @@ export default {
       detail: store.state.algorithmDetail,
       predictChart: null,
       labelChart: null,
-      metric: []
+      metric: [],
+      failureRes: ''
     }
   },
   mounted() {
-    if (Object.keys(this.detail).length === 0) {
+    if (Object.keys(this.detail).length === 0 || this.detail.id.toString() !== this.$route.query.id.toString()) {
       this.$router.push({
         name: 'EvaluateData'
       })
+      return
     }
-    console.log(this.detail)
     const id = this.$route.query.id
     if (id) {
       algorithmResultDetail({
         id
       }).then((res) => {
-        this.metric = [{
-          precision: res.metric[0],
-          recall: res.metric[1],
-          f1score: res.metric[2]
-        }]
-        this.draw(res.result)
+        res = res.result
+        if (typeof res === 'string') {
+          this.failureRes = res
+        } else {
+          this.metric = [{
+            precision: res.metric[0],
+            recall: res.metric[1],
+            f1score: res.metric[2]
+          }]
+          this.draw(res.predict)
+        }
       }).catch((err) => {
         message('数据获取失败：' + err.message)
       })
@@ -93,7 +115,9 @@ export default {
       predictData.push([data.at(-1)[1], data.at(-1)[2]])
       labelData.push([data.at(-1)[1], data.at(-1)[3]])
       const predictOption = {
-        xAxis: {},
+        xAxis: {
+          min: predictData[0][0] - 100
+        },
         yAxis: {},
         tooltip: {
           trigger: 'axis'
@@ -106,7 +130,9 @@ export default {
         ]
       }
       const labelOption = {
-        xAxis: {},
+        xAxis: {
+          min: labelData[0][0] - 100
+        },
         yAxis: {},
         tooltip: {
           trigger: 'axis'
@@ -120,12 +146,14 @@ export default {
       }
       const predictDom = this.$refs.predict
       const labelDom = this.$refs.label
-      const predictChart = echarts.init(predictDom)
-      const labelChart = echarts.init(labelDom)
-      predictChart.setOption(predictOption)
-      labelChart.setOption(labelOption)
-      this.predictChart = predictChart
-      this.labelChart = labelChart
+      if (predictDom && labelDom) {
+        const predictChart = echarts.init(predictDom)
+        const labelChart = echarts.init(labelDom)
+        predictChart.setOption(predictOption)
+        labelChart.setOption(labelOption)
+        this.predictChart = predictChart
+        this.labelChart = labelChart
+      }
     },
     resize() {
       if (this.predictChart) {
@@ -134,6 +162,9 @@ export default {
       if (this.labelChart) {
         this.labelChart.resize()
       }
+    },
+    back() {
+      this.$router.back()
     }
   }
 
@@ -141,13 +172,23 @@ export default {
 </script>
 
 <style>
+.AD-container {
+  position: relative;
+}
+.AD-header-back {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 .AD-chart-container {
   position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 .AD-chart {
   width: 100%;
   position: relative;
-  height: 200px;
+  height: 300px;
 }
 .AD-chart--empty {
   position: absolute;

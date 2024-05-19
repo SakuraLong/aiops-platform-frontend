@@ -134,32 +134,50 @@ export default {
      * - 鼠标放到卡片上后显示的小卡片
      */
     initLittleCard() {
+      const data = [
+        ['故障名字：', this.data.data.name],
+        ['故障类型：', this.type],
+        ['故障时间：', this.bh + ':' + this.bm + '~' + this.eh + ':' + this.em],
+        ['故障起始年月日：', this.by + '年' + this.bM + '月' + this.bd + '日'],
+        ['故障结束年月日：', this.ey + '年' + this.eM + '月' + this.ed + '日'],
+        ['点击右键删除故障', this.data.data.name, true, '#F56C6C']
+      ]
       const div = document.createElement('div')
       const divTitle = document.createElement('div')
+      const spanTitle = document.createElement('span')
+      const imgTitleIcon = document.createElement('img')
       const divBody = document.createElement('div')
-      const divType = document.createElement('div')
-      const divTime = document.createElement('div')
-      const divBeginTime = document.createElement('div')
-      const divEndTime = document.createElement('div')
-      const divStartTime = document.createElement('div')
-      const divFinishTime = document.createElement('div')
 
-      divTitle.textContent = '故障详情'
-      divType.textContent = '故障类型：' + this.type
-      divTime.textContent = '故障时间：' + this.bh + ':' + this.bm + '~' + this.eh + ':' + this.em
-      divBeginTime.textContent = '故障起始年月日：' + this.by + '年' + this.bM + '月' + this.bd + '日'
-      divEndTime.textContent = '故障结束年月日：' + this.ey + '年' + this.eM + '月' + this.ed + '日'
-      divStartTime.textContent = 's:' + this.data.s.toString()
-      divFinishTime.textContent = 'f:' + this.data.f.toString()
+      spanTitle.textContent = this.data.data.name ? '待注入故障详情' : '故障详情'
+      imgTitleIcon.src = require('@/assets/images/主页/编组fault.png')
+
+      data.forEach((d) => {
+        if (!d[1]) return
+        const row = document.createElement('div')
+        const span1 = document.createElement('span')
+        const span2 = document.createElement('span')
+        span1.textContent = d[0]
+        span2.textContent = d[2] === true ? '' : d[1]
+        row.setAttribute('row', '')
+        row.appendChild(span1)
+        row.appendChild(span2)
+        if (d[3]) {
+          span1.style.color = d[3]
+          span2.style.color = d[3]
+        }
+        divBody.appendChild(row)
+      })
 
       div.classList.add('card-detail')
 
-      divBody.appendChild(divType)
-      divBody.appendChild(divTime)
-      divBody.appendChild(divBeginTime)
-      divBody.appendChild(divEndTime)
-      divBody.appendChild(divStartTime)
-      divBody.appendChild(divFinishTime)
+      divTitle.setAttribute('O-B', '')
+      divBody.setAttribute('O-R', '')
+      divTitle.setAttribute('title', '')
+      divBody.setAttribute('body', '')
+
+      divTitle.appendChild(imgTitleIcon)
+      divTitle.appendChild(spanTitle)
+
       div.appendChild(divTitle)
       div.appendChild(divBody)
       this.div = div
@@ -227,6 +245,17 @@ export default {
   text-overflow: ellipsis; /* 使用省略号表示被截断的文本 */
 }
 
+.calendar-card--triangle::after {
+  position: absolute;
+  z-index: 10;
+  content: " ";
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left: 6px solid var(--base-color);
+}
+
 .card-detail {
   text-align: left;
   user-select: none;
@@ -240,15 +269,19 @@ export default {
   border-radius: 4px;
   box-shadow: 0px 4px 12px 0px rgba(165,183,193,0.3);
 }
-.calendar-card--triangle::after {
-  position: absolute;
-  z-index: 10;
-  content: " ";
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 6px solid transparent;
-  border-left: 6px solid var(--base-color);
+.card-detail > div[title] {
+  display: flex;
+  align-items: center;
 }
-
+.card-detail > div[title] > * {
+  margin: 0px 3px;
+}
+.card-detail div[row] > span:first-child {
+  font-size: 12px;
+  color: #748C9A;
+}
+.card-detail div[row] > span:last-child {
+  font-size: 14px;
+  color: #374E5C;
+}
 </style>
