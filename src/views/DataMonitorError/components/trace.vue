@@ -130,6 +130,7 @@ export default {
       return date.getTime() >= Date.now()
     },
     clickTraceCard(i) {
+      if (this.total === 0) return
       this.activeTraceCard = i
       const searchId = this.traceList[i].trace_id
       if (this.traceMap.has(searchId)) {
@@ -162,6 +163,7 @@ export default {
           this.activeTraceCard = -1
           this.traceList = res
           this.clickTraceCard(0)
+          message('搜索到' + this.total.toString() + '条数据', 'success')
         }).catch((err) => {
           message(err.message)
         })
