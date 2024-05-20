@@ -15,7 +15,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus)
 app.use(store).use(router).mount('#app')
 
-fetch('logo.txt').then(response => {
+fetch('/logo.txt').then(response => {
   return response.text()
 }).then(data => {
   console.log('%c' + data, 'color: #409eff;')
