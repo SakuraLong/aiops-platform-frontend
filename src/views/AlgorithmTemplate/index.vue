@@ -202,8 +202,8 @@ export default {
       algorithmRun({
         id: data.data.id,
         name: data.name,
-        start_time: parseInt(data.dataUseDuration[0].getTime() / 1000),
-        end_time: parseInt(data.dataUseDuration[1].getTime() / 1000)
+        start_time: parseInt(new Date(data.dataUseDuration[0]).getTime() / 1000),
+        end_time: parseInt(new Date(data.dataUseDuration[1]).getTime() / 1000)
       }).then(() => {
         message('运行成功', 'success')
       }).catch((err) => {

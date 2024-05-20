@@ -18,7 +18,7 @@
             height="100%"
             @selection-change="selectionChange"
           >
-            <el-table-column type="selection" width="55" />
+            <el-table-column type="selection" width="55" :selectable="selectable" />
             <el-table-column
               prop="createTimeStr"
               label="创建时间"
@@ -261,6 +261,9 @@ export default {
       }).catch((err) => {
         message(err.message)
       })
+    },
+    selectable(row) {
+      return [0, 1].indexOf(row.status) === -1
     }
   }
 
