@@ -194,7 +194,7 @@ const routes = [
     name: 'GraphShower',
     path: '/graphShower',
     component: GraphShower,
-    redirect: '/graphShower/graphTrace',
+    redirect: '/graphShower/graphCalendar',
     children: [
       {
         path: 'graphTrace',
