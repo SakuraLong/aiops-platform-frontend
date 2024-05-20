@@ -23,6 +23,10 @@ import Client from '@/views/Client'
 import login from '@/views/Client/login.vue'
 import reg from '@/views/Client/reg.vue'
 
+import GraphShower from '@/views/GraphShower'
+import graphTrace from '@/views/GraphShower/graphs/graphTrace.vue'
+import graphCalendar from '@/views/GraphShower/graphs/graphCalendar.vue'
+
 const routes = [
   {
     path: '/client',
@@ -185,6 +189,22 @@ const routes = [
     name: 'AlgorithmDetail',
     path:'/algorithmDetail',
     component: AlgorithmDetail
+  },
+  {
+    name: 'GraphShower',
+    path: '/graphShower',
+    component: GraphShower,
+    redirect: '/graphShower/graphTrace',
+    children: [
+      {
+        path: 'graphTrace',
+        component: graphTrace
+      },
+      {
+        path: 'graphCalendar',
+        component: graphCalendar
+      }
+    ]
   }
 ]
 
