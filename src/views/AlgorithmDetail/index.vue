@@ -4,7 +4,7 @@
       <div class="AD-container">
         <header>
           <CardTitle>
-            算法：{{ detail.algorithm.name }}
+            算法：{{ detail.algorithm ? detail.algorithm.name : '' }}
           </CardTitle>
           <div class="AD-header-back">
             <el-button size="small" type="primary" plain @click="back">
@@ -110,13 +110,13 @@ export default {
       const labelData = []
       data.forEach((item) => {
         predictData.push([item[0], item[2]])
+        predictData.push([item[1], item[2]])
         labelData.push([item[0], item[3]])
+        labelData.push([item[1], item[3]])
       })
-      predictData.push([data.at(-1)[1], data.at(-1)[2]])
-      labelData.push([data.at(-1)[1], data.at(-1)[3]])
       const predictOption = {
         xAxis: {
-          min: predictData[0][0] - 100
+          min: predictData[0][0] - 10
         },
         yAxis: {},
         tooltip: {
@@ -131,7 +131,7 @@ export default {
       }
       const labelOption = {
         xAxis: {
-          min: labelData[0][0] - 100
+          min: labelData[0][0] - 10
         },
         yAxis: {},
         tooltip: {
