@@ -1,56 +1,6 @@
 <template>
   <div class="calendar">
     <header class="calendar-header">
-      <!-- <div v-if="page === 'main'">
-        <div class="calendar-header__left">
-          <weekPicker
-            @lastWeek="lastWeek"
-            @nextWeek="nextWeek"
-            @setWeek="setWeek"
-          />
-          <span>检索到<span style="color: #00A0FF;">{{ faultAmount }}</span>条数据</span>
-        </div>
-        <div class="calendar-header__right">
-          <div class="header__controller">
-            <span>故障类型：</span>
-            <el-select
-              v-model="selectValue"
-              style="width: 80px;"
-              size="small"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item"
-                :value="item"
-              />
-            </el-select>
-            <div class="controller__weekday">
-              <span
-                :class="{'controller__weekday--selected': !weekShow}"
-                @click="weekShow = false"
-              >
-                日
-              </span>
-              <span
-                :class="{'controller__weekday--selected': weekShow}"
-                @click="weekShow = true"
-              >
-                周
-              </span>
-            </div>
-          </div>
-          <div class="data__controller">
-            <el-button
-              size="small"
-              type="primary"
-              @click="toDataMonitor"
-            >
-              数据监控
-            </el-button>
-          </div>
-        </div>
-      </div> -->
       <headerMain
         v-if="page === 'main'"
         ref="header"
@@ -143,15 +93,6 @@ export default {
     // console.log('calendar')
   },
   methods: {
-    lastWeek() {
-      this.$refs.week.lastWeek()
-    },
-    nextWeek() {
-      this.$refs.week.nextWeek()
-    },
-    setWeek(weekMonday) {
-      this.$refs.week.setWeek(weekMonday - 1000 * 60 * 60 * 24)
-    },
     setFaultAmount(val) {
       this.faultAmount = val
     },
@@ -172,11 +113,11 @@ export default {
           break
       }
     },
-    timePickerChange(data) {
+    timePickerChange(date) {
       if (this.weekShow) {
-        this.$refs.week.setWeek(data.timestamp)
+        this.$refs.week.setWeek(date.timestamp)
       } else {
-        this.$refs.day.setDay(data.timestamp)
+        this.$refs.day.setDay(date.timestamp)
       }
     }
   }

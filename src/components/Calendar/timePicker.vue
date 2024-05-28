@@ -11,7 +11,7 @@
       v-model="time"
       :clearable="false"
       :type="type"
-      :format="type === 'week' ? 'YYYY 第 ww 周' : 'YYYY/MM/DD HH:mm:ss'"
+      :format="type === 'week' ? 'YYYY 第 ww 周' : 'YYYY/MM/DD'"
       :placeholder="type === 'week' ? '选择周' : '选择天'"
       size="small"
       @change="setTime"
@@ -66,11 +66,12 @@ export default {
       this.emitChange('set')
     },
     emitChange(type = 'set') {
+      this.time = new Date(this.time)
       const res = new Date(this.time)
       if (this.type === 'week') {
         res.setDate(res.getDate() - res.getDay()) // to Sunday
       }
-      this.$emit('change', res, res.getTime(), type)
+      this.$emit('timePickerChange', res, res.getTime(), type)
     },
     getTime() {
       const res = new Date(this.time)
