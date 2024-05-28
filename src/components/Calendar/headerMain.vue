@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="calendar-header__left">
-      <timePicker ref="timePicker" :type="weekShow ? 'week' : 'date'" @change="timePickerChange" />
+      <timePicker ref="timePicker" :type="weekShow ? 'week' : 'date'" @timePickerChange="timePickerChange" />
       <span>检索到<span style="color: #00A0FF;">{{ faultAmount }}</span>条数据</span>
     </div>
     <div class="calendar-header__right">
@@ -100,9 +100,6 @@ export default {
         timestamp,
         type
       })
-    },
-    change(type, data) {
-
     },
     getTime() {
       return this.$refs.timePicker.getTime()

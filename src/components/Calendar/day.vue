@@ -134,6 +134,7 @@ export default {
     async getData() {
       const tdata = await this.calendarDataManager.getDataSync()
       const data = tdata[0]
+      if (!Array.isArray(data)) return
       const tday = this.calendarDataManager.getCalendarShowDate()
       const day = tday[0]
       this.data = data
