@@ -103,6 +103,7 @@ export default {
             password: this.loginForm.password
           }).then((res) => {
             setToken(res.token)
+            message('登陆成功', 'success')
             this.$router.push({
               path: '/'
             })
