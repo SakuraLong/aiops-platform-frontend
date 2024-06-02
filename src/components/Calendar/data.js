@@ -336,20 +336,20 @@ class CalendarDataManager {
       const key = y.toString() + '-' + m.toString() + '-' + d.toString()
       if (dataMap.get(key) === undefined || !dataMap.get(key).query) {
         /* <----------------- 测试 -----------------> */
-        const getData = await this.testDataCreater(begin, begin + this.DAY)
+        // const getData = await this.testDataCreater(begin, begin + this.DAY)
         /* <----------------- 测试 -----------------> */
-        // const getData = await getGroundTruth({
-        //   start_time: Math.floor(begin / 1000),
-        //   end_time: Math.floor((begin + this.DAY) / 1000)
-        // }).then((res) => {
-        //   res.ground_truth.forEach((item) => {
-        //     item.timestamp *= 1000
-        //   })
-        //   return res.ground_truth
-        // }).catch((err) => {
-        //   message(err.message)
-        //   return []
-        // })
+        const getData = await getGroundTruth({
+          start_time: Math.floor(begin / 1000),
+          end_time: Math.floor((begin + this.DAY) / 1000)
+        }).then((res) => {
+          res.ground_truth.forEach((item) => {
+            item.timestamp *= 1000
+          })
+          return res.ground_truth
+        }).catch((err) => {
+          message(err.message)
+          return []
+        })
 
         const getDateAfter = []
         getData.forEach((data, i) => {

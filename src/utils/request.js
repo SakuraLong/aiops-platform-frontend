@@ -54,7 +54,6 @@ service.interceptors.response.use(
         name: 'ClientLogin'
       })
     }
-    // console.log(error) // for debug
     return Promise.reject(error)
   }
 )

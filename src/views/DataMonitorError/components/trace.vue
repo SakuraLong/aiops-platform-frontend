@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import { traceGraph } from '@/utils/test' // 服务器数据出现问题 使用正确数据代替错误数据
 import TraceCard from '@/components/TraceCard'
 import TraceGraph from '@/components/TraceGraph'
 import TraceTable from '@/components/TraceTable'
@@ -140,7 +141,8 @@ export default {
         getTrace({
           trace_id: searchId
         }).then((res) => {
-          const traceGraph = res
+          // const traceGraph = res // 服务器数据出现问题 使用正确数据代替错误数据
+          message('服务器数据异常，此处采用模拟数据', 'warning')
           this.traceMap.set(searchId, deepClone(traceGraph))
           this.traceGraph = traceGraph
         }).catch((err) => {
